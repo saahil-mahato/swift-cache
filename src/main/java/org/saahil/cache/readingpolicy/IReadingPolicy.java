@@ -1,9 +1,10 @@
 package org.saahil.cache.readingpolicy;
 
+import org.saahil.cache.datasource.IDataSource;
+
 import java.util.Map;
 
 public interface IReadingPolicy<K, V> {
-    public interface ReadingPolicy<K, V> {
-        V read(Map<K, V> cacheMap, K key, DataSource<K, V> dataSource);
-    }
+    V read(Map<K, V> cacheMap, K key);
+    V readWithDataSource(Map<K, V> cacheMap, K key, IDataSource<K, V> dataSource, String sql);
 }

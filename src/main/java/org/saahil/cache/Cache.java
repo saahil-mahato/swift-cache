@@ -1,8 +1,10 @@
 package org.saahil.cache;
 
+import org.saahil.cache.datasource.IDataSource;
 import org.saahil.cache.evictionstrategy.IEvictionStrategy;
+import org.saahil.cache.readingpolicy.IReadingPolicy;
+import org.saahil.cache.writingpolicy.IWritingPolicy;
 
-import javax.sql.DataSource;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -35,8 +37,9 @@ public class Cache<K, V> implements ICache<K, V> {
         this.readingPolicy = readingPolicy;
     }
 
-    public void put(K key, V value) {
+    public void put(K key, V value, String storeSql) {
         lock.writeLock().lock();
+        storeSql = storeSql.trim();
         try {
             if (cacheMap.size() >= maxSize) {
                 K evictedKey = evictionStrategy.evict(cacheMap, evictionQueue);
@@ -45,7 +48,7 @@ public class Cache<K, V> implements ICache<K, V> {
                     evictionQueue.remove(evictedKey);
                 }
             }
-            writingPolicy.write(cacheMap, key, value, dataSource);
+            writingPolicy.write(cacheMap, key, value, dataSource, storeSql);
             evictionQueue.remove(key);
             evictionQueue.offer(key);
         } finally {
@@ -53,10 +56,16 @@ public class Cache<K, V> implements ICache<K, V> {
         }
     }
 
-    public V get(K key) {
+    public V get(K key, String fetchSql) {
         lock.readLock().lock();
+        fetchSql = fetchSql.trim();
         try {
-            V value = readingPolicy.read(cacheMap, key, dataSource);
+            V value;
+            if (fetchSql.length() == 0) {
+                value = readingPolicy.read(cacheMap, key);
+            } else {
+                value = readingPolicy.readWithDataSource(cacheMap, key, dataSource, fetchSql);
+            }
             if (value != null) {
                 evictionQueue.remove(key);
                 evictionQueue.offer(key);
@@ -67,12 +76,13 @@ public class Cache<K, V> implements ICache<K, V> {
         }
     }
 
-    public void remove(K key) {
+    public void remove(K key, String deleteSql) {
         lock.writeLock().lock();
+        deleteSql = deleteSql.trim();
         try {
             cacheMap.remove(key);
             evictionQueue.remove(key);
-            dataSource.delete(key);
+            dataSource.delete(key, deleteSql);
         } finally {
             lock.writeLock().unlock();
         }

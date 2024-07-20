@@ -1,13 +1,14 @@
 package org.saahil.cache.writingpolicy;
 
-import javax.sql.DataSource;
+import org.saahil.cache.datasource.IDataSource;
+
 import java.util.Map;
 
 public class WriteIfAbsentPolicy<K,V> implements IWritingPolicy<K, V> {
-    public void write (Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource) {
+    public void write (Map<K, V> cacheMap, K key, V value, IDataSource<K, V> dataSource, String storeSql) {
         if (!cacheMap.containsKey(key)) {
             cacheMap.put(key, value);
-            dataSource.store(key, value);
+            dataSource.store(key, value, storeSql);
         }
     }
 }
