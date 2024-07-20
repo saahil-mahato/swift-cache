@@ -1,4 +1,4 @@
-package org.saahil.cache.evictionstrategy;
+package org.swiftcache.evictionstrategy;
 
 import java.util.Map;
 import java.util.Queue;

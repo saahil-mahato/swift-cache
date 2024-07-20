@@ -1,9 +1,9 @@
-package org.saahil.cache;
+package org.swiftcache.cache;
 
-import org.saahil.cache.datasource.IDataSource;
-import org.saahil.cache.evictionstrategy.IEvictionStrategy;
-import org.saahil.cache.readingpolicy.IReadingPolicy;
-import org.saahil.cache.writingpolicy.IWritingPolicy;
+import org.swiftcache.datasource.IDataSource;
+import org.swiftcache.evictionstrategy.IEvictionStrategy;
+import org.swiftcache.readingpolicy.IReadingPolicy;
+import org.swiftcache.writingpolicy.IWritingPolicy;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;

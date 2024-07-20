@@ -1,4 +1,4 @@
-package org.saahil.cache.datasource;
+package org.swiftcache.datasource;
 
 public interface IDataSource<K, V> {
     V fetch(K key, String sql);

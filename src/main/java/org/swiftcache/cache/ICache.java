@@ -1,4 +1,4 @@
-package org.saahil.cache;
+package org.swiftcache.cache;
 
 public interface ICache<K,V> {
     void put(K key, V value,  String storeSql);

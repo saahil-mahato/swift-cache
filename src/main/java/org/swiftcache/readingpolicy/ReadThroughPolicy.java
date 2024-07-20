@@ -1,6 +1,6 @@
-package org.saahil.cache.readingpolicy;
+package org.swiftcache.readingpolicy;
 
-import org.saahil.cache.datasource.IDataSource;
+import org.swiftcache.datasource.IDataSource;
 
 import java.util.Map;
 
