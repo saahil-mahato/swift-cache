@@ -1,5 +1,7 @@
 package org.saahil.cache;
 
+import org.saahil.cache.evictionstrategy.IEvictionStrategy;
+
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -13,16 +15,16 @@ public class Cache<K, V> implements ICache<K, V> {
     private final Map<K, V> cacheMap;
     private final Queue<K> evictionQueue;
     private final ReadWriteLock lock;
-    private final DataSource<K, V> dataSource;
-    private final EvictionStrategy<K, V> evictionStrategy;
-    private final WritingPolicy<K,V> writingPolicy;
-    private final ReadingPolicy<K, V> readingPolicy;
+    private final IDataSource<K, V> dataSource;
+    private final IEvictionStrategy<K, V> evictionStrategy;
+    private final IWritingPolicy<K,V> writingPolicy;
+    private final IReadingPolicy<K, V> readingPolicy;
 
     public Cache(long maxSize,
-                 DataSource<K, V> dataSource,
-                 EvictionStrategy<K, V> evictionStrategy,
-                 WritingPolicy<K, V> writingPolicy,
-                 ReadingPolicy<K, V> readingPolicy) {
+                 IDataSource<K, V> dataSource,
+                 IEvictionStrategy<K, V> evictionStrategy,
+                 IWritingPolicy<K, V> writingPolicy,
+                 IReadingPolicy<K, V> readingPolicy) {
         this.maxSize = maxSize;
         this.cacheMap = new LinkedHashMap<K, V>((int)maxSize, 0.75f, true);
         this.evictionQueue = new LinkedList<K>();
