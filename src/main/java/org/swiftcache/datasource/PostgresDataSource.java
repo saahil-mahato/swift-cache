@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class PostgresDataSource<K, V> implements IDataSource<K, V> {
     private final Connection connection;
+    private static final Logger logger = Logger.getLogger(PostgresDataSource.class.getName());
 
     public PostgresDataSource(Connection connection) {
         this.connection = connection;
@@ -20,10 +23,12 @@ public class PostgresDataSource<K, V> implements IDataSource<K, V> {
             statement.setObject(1, key);
             rs = statement.executeQuery();
             if (rs.next()) {
-                return (V) rs.getObject(1);
+                @SuppressWarnings("unchecked")
+                V value = (V) rs.getObject(1);
+                return value;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "An error occurred while executing the database operation", e);
         }
         return null;
     }
@@ -36,12 +41,12 @@ public class PostgresDataSource<K, V> implements IDataSource<K, V> {
             statement.setObject(2, value);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "An error occurred while executing the database operation.", e);
         } finally {
             try {
                 if (statement != null) statement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Error closing database resources.", e);
             }
         }
     }
@@ -53,12 +58,12 @@ public class PostgresDataSource<K, V> implements IDataSource<K, V> {
             statement.setObject(1, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "An error occurred while executing the database operation.", e);
         } finally {
             try {
                 if (statement != null) statement.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Error closing database resources.", e);
             }
         }
     }
