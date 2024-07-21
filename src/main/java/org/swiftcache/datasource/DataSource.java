@@ -7,19 +7,19 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-public class PostgresDataSource<K, V> implements IDataSource<K, V> {
+public class DataSource<K, V> implements IDataSource<K, V> {
     private final Connection connection;
-    private static final Logger logger = Logger.getLogger(PostgresDataSource.class.getName());
+    private static final Logger logger = Logger.getLogger(DataSource.class.getName());
 
-    public PostgresDataSource(Connection connection) {
+    public DataSource(Connection connection) {
         this.connection = connection;
     }
 
     public V fetch(K key, String sql) {
-        PreparedStatement statement = null;
-        ResultSet rs = null;
+        PreparedStatement statement;
+        ResultSet rs;
         try {
-            statement = connection.prepareStatement(sql);
+            statement = this.connection.prepareStatement(sql);
             statement.setObject(1, key);
             rs = statement.executeQuery();
             if (rs.next()) {
@@ -33,10 +33,10 @@ public class PostgresDataSource<K, V> implements IDataSource<K, V> {
         return null;
     }
 
-    public void store(K key, V value, String sql) {
+    public void store(String key, int value, String sql) {
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(sql);
+            statement = this.connection.prepareStatement(sql);
             statement.setObject(1, key);
             statement.setObject(2, value);
             statement.executeUpdate();
@@ -54,7 +54,7 @@ public class PostgresDataSource<K, V> implements IDataSource<K, V> {
     public void delete(K key, String sql) {
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(sql);
+            statement = this.connection.prepareStatement(sql);
             statement.setObject(1, key);
             statement.executeUpdate();
         } catch (SQLException e) {

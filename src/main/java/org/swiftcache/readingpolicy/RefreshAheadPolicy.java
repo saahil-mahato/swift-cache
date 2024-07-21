@@ -18,14 +18,14 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
     public V readWithDataSource(final Map<K, V> cacheMap, final K key, final IDataSource<K, V> dataSource, final String fetchSql) {
         V value = cacheMap.get(key);
         if (value != null) {
-            timer.schedule(new TimerTask() {
+            this.timer.schedule(new TimerTask() {
                 public void run() {
                     V freshValue = dataSource.fetch(key, fetchSql);
                     if (freshValue != null) {
                         cacheMap.put(key, freshValue);
                     }
                 }
-            }, refreshIntervalMillis);
+            }, this.refreshIntervalMillis);
         }
         return value;
     }

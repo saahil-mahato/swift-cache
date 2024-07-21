@@ -38,72 +38,70 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     public void put(K key, V value, String storeSql) {
-        lock.writeLock().lock();
+        this.lock.writeLock().lock();
         storeSql = storeSql.trim();
         try {
-            if (cacheMap.size() >= maxSize) {
-                K evictedKey = evictionStrategy.evict(cacheMap, evictionQueue);
+            if (this.cacheMap.size() >= this.maxSize) {
+                K evictedKey = this.evictionStrategy.evict(this.cacheMap, this.evictionQueue);
                 if (evictedKey != null) {
-                    cacheMap.remove(evictedKey);
-                    evictionQueue.remove(evictedKey);
+                    this.cacheMap.remove(evictedKey);
+                    this.evictionQueue.remove(evictedKey);
                 }
             }
-            writingPolicy.write(cacheMap, key, value, dataSource, storeSql);
-            evictionQueue.remove(key);
-            evictionQueue.offer(key);
+            this.writingPolicy.write(this.cacheMap, key, value, this.dataSource, storeSql);
+            this.evictionStrategy.access(key, this.evictionQueue);
         } finally {
-            lock.writeLock().unlock();
+            this.lock.writeLock().unlock();
         }
     }
 
     public V get(K key, String fetchSql) {
-        lock.readLock().lock();
+        this.lock.readLock().lock();
         fetchSql = fetchSql.trim();
         try {
             V value;
             if (fetchSql.length() == 0) {
-                value = readingPolicy.read(cacheMap, key);
+                value = this.readingPolicy.read(this.cacheMap, key);
             } else {
-                value = readingPolicy.readWithDataSource(cacheMap, key, dataSource, fetchSql);
+                value = this.readingPolicy.readWithDataSource(this.cacheMap, key, this.dataSource, fetchSql);
             }
             if (value != null) {
-                evictionQueue.remove(key);
-                evictionQueue.offer(key);
+                this.evictionStrategy.access(key, this.evictionQueue);
             }
             return value;
         } finally {
-            lock.readLock().unlock();
+            this.lock.readLock().unlock();
         }
     }
 
     public void remove(K key, String deleteSql) {
-        lock.writeLock().lock();
+        this.lock.writeLock().lock();
         deleteSql = deleteSql.trim();
         try {
-            cacheMap.remove(key);
-            evictionQueue.remove(key);
-            dataSource.delete(key, deleteSql);
+            this.cacheMap.remove(key);
+            this.evictionQueue.remove(key);
+            this.dataSource.delete(key, deleteSql);
         } finally {
-            lock.writeLock().unlock();
+            this.lock.writeLock().unlock();
         }
     }
 
     public long size() {
-        lock.readLock().lock();
+        this.lock.readLock().lock();
         try {
-            return cacheMap.size();
+            return this.cacheMap.size();
         } finally {
-            lock.readLock().unlock();
+            this.lock.readLock().unlock();
         }
     }
 
     public void clear() {
-        lock.writeLock().lock();
+        this.lock.writeLock().lock();
         try {
-            cacheMap.clear();
-            evictionQueue.clear();
+            this.cacheMap.clear();
+            this.evictionQueue.clear();
         } finally {
-            lock.writeLock().unlock();
+            this.lock.writeLock().unlock();
         }
     }
 }

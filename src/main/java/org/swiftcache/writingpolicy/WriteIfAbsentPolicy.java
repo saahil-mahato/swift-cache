@@ -5,7 +5,7 @@ import org.swiftcache.datasource.IDataSource;
 import java.util.Map;
 
 public class WriteIfAbsentPolicy<K,V> implements IWritingPolicy<K, V> {
-    public void write (Map<K, V> cacheMap, K key, V value, IDataSource<K, V> dataSource, String storeSql) {
+    public void write (Map<String, Integer> cacheMap, String key, int value, IDataSource<String, Integer> dataSource, String storeSql) {
         if (!cacheMap.containsKey(key)) {
             cacheMap.put(key, value);
             dataSource.store(key, value, storeSql);
