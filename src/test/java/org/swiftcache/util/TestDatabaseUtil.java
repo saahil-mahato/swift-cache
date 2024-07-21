@@ -9,7 +9,13 @@ public class TestDatabaseUtil {
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
+    public static void createTable(Connection connection) throws SQLException {
+        connection.createStatement().execute("CREATE TABLE IF NOT EXISTS test_table (testKey VARCHAR(255) PRIMARY KEY, testValue INTEGER);");
+    }
+
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+        Connection connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+        createTable(connection);
+        return connection;
     }
 }

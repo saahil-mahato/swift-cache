@@ -5,7 +5,7 @@ import org.swiftcache.datasource.IDataSource;
 import java.util.Map;
 
 public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
-    public void write(Map<String, Integer> cacheMap, final String key, final int value, final IDataSource<String, Integer> dataSource, final String storeSql) {
+    public void write(Map<K, V> cacheMap, final K key, final V value, final IDataSource<K, V> dataSource, final String storeSql) {
         cacheMap.put(key, value);
         new Thread(new Runnable() {
             public void run() {

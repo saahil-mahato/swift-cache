@@ -15,6 +15,7 @@ public class DataSource<K, V> implements IDataSource<K, V> {
         this.connection = connection;
     }
 
+    @SuppressWarnings("unchecked")
     public V fetch(K key, String sql) {
         PreparedStatement statement;
         ResultSet rs;
@@ -23,9 +24,7 @@ public class DataSource<K, V> implements IDataSource<K, V> {
             statement.setObject(1, key);
             rs = statement.executeQuery();
             if (rs.next()) {
-                @SuppressWarnings("unchecked")
-                V value = (V) rs.getObject(1);
-                return value;
+                return (V) rs.getObject(1);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "An error occurred while executing the database operation", e);
@@ -33,7 +32,7 @@ public class DataSource<K, V> implements IDataSource<K, V> {
         return null;
     }
 
-    public void store(String key, int value, String sql) {
+    public void store(K key, V value, String sql) {
         PreparedStatement statement = null;
         try {
             statement = this.connection.prepareStatement(sql);

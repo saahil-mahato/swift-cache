@@ -22,6 +22,7 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
                 public void run() {
                     V freshValue = dataSource.fetch(key, fetchSql);
                     if (freshValue != null) {
+                        cacheMap.remove(key);
                         cacheMap.put(key, freshValue);
                     }
                 }

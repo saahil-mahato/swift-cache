@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 public class WriteBehindPolicyTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testWrite() throws InterruptedException {
         WriteBehindPolicy<String, Integer> policy = new WriteBehindPolicy<String, Integer>();
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();

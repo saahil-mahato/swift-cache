@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 public class WriteIfAbsentPolicyTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testWriteWhenAbsent() {
         WriteIfAbsentPolicy<String, Integer> policy = new WriteIfAbsentPolicy<String, Integer>();
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();
@@ -24,6 +25,7 @@ public class WriteIfAbsentPolicyTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testWriteWhenPresent() {
         WriteIfAbsentPolicy<String, Integer> policy = new WriteIfAbsentPolicy<String, Integer>();
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();

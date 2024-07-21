@@ -21,10 +21,12 @@ public class LRUEvictionStrategyTest {
         evictionQueue.offer("key2");
         evictionQueue.offer("key3");
 
+        strategy.access("key1", evictionQueue);
+
         String evictedKey = strategy.evict(cacheMap, evictionQueue);
 
-        assertEquals("key1", evictedKey);
+        assertEquals("key2", evictedKey);
         assertEquals(2, evictionQueue.size());
-        assertFalse(evictionQueue.contains("key1"));
+        assertFalse(evictionQueue.contains("key2"));
     }
 }
