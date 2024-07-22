@@ -9,22 +9,43 @@ import java.util.Queue;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the {@link LRUEvictionStrategy} class.
+ * <p>
+ * This test class verifies the behavior of the {@link LRUEvictionStrategy} class, specifically
+ * its eviction functionality based on the Least Recently Used (LRU) principle. The tests ensure
+ * that the cache eviction strategy correctly evicts the least recently used entry.
+ * </p>
+ */
 public class LRUEvictionStrategyTest {
 
+    /**
+     * Tests the {@link LRUEvictionStrategy#evict(Map, Queue)} method to ensure that it correctly
+     * evicts the least recently used entry from the queue.
+     * <p>
+     * This test initializes an LRU eviction strategy, adds a few keys to the eviction queue, accesses
+     * one of the keys to simulate recent usage, and then verifies that the least recently used key
+     * (which should be the oldest key that was not accessed recently) is evicted as expected.
+     * </p>
+     */
     @Test
     public void testEvict() {
         LRUEvictionStrategy<String, Integer> strategy = new LRUEvictionStrategy<>();
         Map<String, Integer> cacheMap = new LinkedHashMap<>();
         Queue<String> evictionQueue = new LinkedList<>();
 
+        // Adding keys to the eviction queue
         evictionQueue.offer("key1");
         evictionQueue.offer("key2");
         evictionQueue.offer("key3");
 
+        // Accessing a key to simulate recent usage
         strategy.access("key1", evictionQueue);
 
+        // Performing eviction
         String evictedKey = strategy.evict(cacheMap, evictionQueue);
 
+        // Verifying the eviction result
         assertEquals("key2", evictedKey);
         assertEquals(2, evictionQueue.size());
         assertFalse(evictionQueue.contains("key2"));
