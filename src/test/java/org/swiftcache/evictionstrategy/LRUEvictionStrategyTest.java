@@ -13,9 +13,9 @@ public class LRUEvictionStrategyTest {
 
     @Test
     public void testEvict() {
-        LRUEvictionStrategy<String, Integer> strategy = new LRUEvictionStrategy<String, Integer>();
-        Map<String, Integer> cacheMap = new LinkedHashMap<String, Integer>();
-        Queue<String> evictionQueue = new LinkedList<String>();
+        LRUEvictionStrategy<String, Integer> strategy = new LRUEvictionStrategy<>();
+        Map<String, Integer> cacheMap = new LinkedHashMap<>();
+        Queue<String> evictionQueue = new LinkedList<>();
 
         evictionQueue.offer("key1");
         evictionQueue.offer("key2");

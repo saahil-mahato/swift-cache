@@ -14,37 +14,48 @@ public class DataSourceTest {
     private DataSource<String, Integer> dataSource;
     private Connection connection;
 
+    private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
+    private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
+    private static final String DELETE_SQL = "DELETE FROM test_table WHERE testKey = ?";
+
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
+        dataSource = new DataSource<>(connection);
+    }
+
+    private void insertTestData(String key, int value) throws SQLException {
+        connection.createStatement().execute(
+                String.format("INSERT INTO test_table (testKey, testValue) VALUES ('%s', %d)", key, value)
+        );
     }
 
     @Test
     public void testFetch() throws SQLException {
-        // Insert test data
-        connection.createStatement().execute("INSERT INTO test_table (testKey, testValue) VALUES ('key1', 42)");
+        insertTestData("key1", 42);
 
-        Integer result = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer result = dataSource.fetch("key1", SELECT_SQL);
         assertEquals(Integer.valueOf(42), result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     @Test
-    public void testStore() {
-        dataSource.store("key2", 43, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+    public void testStore() throws SQLException {
+        dataSource.store("key2", 43, INSERT_SQL);
 
-        Integer result = dataSource.fetch("key2", "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer result = dataSource.fetch("key2", SELECT_SQL);
         assertEquals(Integer.valueOf(43), result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     @Test
     public void testDelete() throws SQLException {
-        // Insert test data
-        connection.createStatement().execute("INSERT INTO test_table (testKey, testValue) VALUES ('key3', 44)");
+        insertTestData("key3", 44);
 
-        dataSource.delete("key3", "DELETE FROM test_table WHERE testKey = ?");
+        dataSource.delete("key3", DELETE_SQL);
 
-        Integer result = dataSource.fetch("key3", "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer result = dataSource.fetch("key3", SELECT_SQL);
         assertNull(result);
+        TestDatabaseUtil.clearTable(connection);
     }
 }

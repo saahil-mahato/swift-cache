@@ -14,31 +14,40 @@ import static org.junit.Assert.*;
 
 public class WriteBehindPolicyTest {
 
+    private static final String TEST_KEY = "key1";
+    private static final Integer TEST_VALUE = 42;
+    private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
+    private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
+    private static final int WAIT_TIME = 200;
+
+    private Connection connection;
     private DataSource<String, Integer> dataSource;
+    private WriteBehindPolicy<String, Integer> policy;
+    private Map<String, Integer> cacheMap;
 
     @Before
     public void setUp() throws SQLException {
-        Connection connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
+        connection = TestDatabaseUtil.getConnection();
+        dataSource = new DataSource<>(connection);
+        policy = new WriteBehindPolicy<>();
+        cacheMap = new HashMap<>();
     }
 
     @Test
-    public void testWrite() throws InterruptedException {
-        WriteBehindPolicy<String, Integer> policy = new WriteBehindPolicy<String, Integer>();
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
+    public void testWrite() throws InterruptedException, SQLException {
+        policy.write(cacheMap, TEST_KEY, TEST_VALUE, dataSource, INSERT_SQL);
 
-        policy.write(cacheMap, "key1", 42, dataSource, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        Integer dataResult = dataSource.fetch(TEST_KEY, SELECT_SQL);
 
-        Integer dataResult = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
-
-        assertEquals(Integer.valueOf(42), cacheMap.get("key1"));
+        assertEquals(TEST_VALUE, cacheMap.get(TEST_KEY));
         assertNull(dataResult);
 
         // Wait for the asynchronous write to occur
-        Thread.sleep(200);
+        Thread.sleep(WAIT_TIME);
 
-        Integer dataResultRefreshed = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer dataResultRefreshed = dataSource.fetch(TEST_KEY, SELECT_SQL);
 
-        assertEquals(cacheMap.get("key1"), dataResultRefreshed);
+        assertEquals(cacheMap.get(TEST_KEY), dataResultRefreshed);
+        TestDatabaseUtil.clearTable(connection);
     }
 }

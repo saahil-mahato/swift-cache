@@ -28,8 +28,8 @@ public class Cache<K, V> implements ICache<K, V> {
                  IWritingPolicy<K, V> writingPolicy,
                  IReadingPolicy<K, V> readingPolicy) {
         this.maxSize = maxSize;
-        this.cacheMap = new LinkedHashMap<K, V>((int)maxSize, 0.75f, true);
-        this.evictionQueue = new LinkedList<K>();
+        this.cacheMap = new LinkedHashMap<>((int) maxSize, 0.75f, true);
+        this.evictionQueue = new LinkedList<>();
         this.lock = new ReentrantReadWriteLock();
         this.dataSource = dataSource;
         this.evictionStrategy = evictionStrategy;

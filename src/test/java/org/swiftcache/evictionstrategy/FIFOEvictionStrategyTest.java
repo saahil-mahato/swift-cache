@@ -13,9 +13,9 @@ public class FIFOEvictionStrategyTest {
 
     @Test
     public void testEvict() {
-        FIFOEvictionStrategy<String, Integer> strategy = new FIFOEvictionStrategy<String, Integer>();
-        Map<String, Integer> cacheMap = new LinkedHashMap<String, Integer>();
-        Queue<String> evictionQueue = new LinkedList<String>();
+        FIFOEvictionStrategy<String, Integer> strategy = new FIFOEvictionStrategy<>();
+        Map<String, Integer> cacheMap = new LinkedHashMap<>();
+        Queue<String> evictionQueue = new LinkedList<>();
 
         evictionQueue.offer("key1");
         evictionQueue.offer("key2");

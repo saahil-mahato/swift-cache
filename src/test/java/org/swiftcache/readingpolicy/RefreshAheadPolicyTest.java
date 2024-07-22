@@ -14,39 +14,51 @@ import static org.junit.Assert.*;
 
 public class RefreshAheadPolicyTest {
 
+    private Connection connection;
     private DataSource<String, Integer> dataSource;
+
+    private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
+    private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
+    private static final String TEST_KEY = "key1";
+    private static final int REFRESH_INTERVAL = 100;
+    private static final int WAIT_TIME = 200;
 
     @Before
     public void setUp() throws SQLException {
-        Connection connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
+        connection = TestDatabaseUtil.getConnection();
+        dataSource = new DataSource<>(connection);
     }
 
     @Test
-    public void testReadWithDataSource() throws InterruptedException {
-        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String, Integer>(100);
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
+    public void testReadWithDataSource() throws InterruptedException, SQLException {
+        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<>(REFRESH_INTERVAL);
+        Map<String, Integer> cacheMap = new HashMap<>();
 
-        dataSource.store("key1", 43, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
-        cacheMap.put("key1", 42);
+        int initialValue = 42;
+        int updatedValue = 43;
 
-        Integer dataResult = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
-        Integer policyResult = policy.readWithDataSource(cacheMap, "key1", dataSource, "SELECT testValue FROM test_table WHERE testKey = ?");
+        dataSource.store(TEST_KEY, updatedValue, INSERT_SQL);
+        cacheMap.put(TEST_KEY, initialValue);
 
-        assertEquals(Integer.valueOf(43), dataResult);
-        assertEquals(Integer.valueOf(42), policyResult);
+        Integer dataResult = dataSource.fetch(TEST_KEY, SELECT_SQL);
+        Integer policyResult = policy.readWithDataSource(cacheMap, TEST_KEY, dataSource, SELECT_SQL);
+
+        assertEquals(Integer.valueOf(updatedValue), dataResult);
+        assertEquals(Integer.valueOf(initialValue), policyResult);
 
         // Wait for the refresh to occur
-        Thread.sleep(200);
+        Thread.sleep(WAIT_TIME);
 
-        Integer policyResultRefreshed = policy.readWithDataSource(cacheMap, "key1", dataSource, "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer policyResultRefreshed = policy.readWithDataSource(cacheMap, TEST_KEY, dataSource, SELECT_SQL);
         assertEquals(dataResult, policyResultRefreshed);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testRead() {
-        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String, Integer>(1);
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
-        policy.read(cacheMap, "key1");
+    public void testRead() throws SQLException {
+        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<>(1);
+        Map<String, Integer> cacheMap = new HashMap<>();
+        policy.read(cacheMap, TEST_KEY);
+        TestDatabaseUtil.clearTable(connection);
     }
 }

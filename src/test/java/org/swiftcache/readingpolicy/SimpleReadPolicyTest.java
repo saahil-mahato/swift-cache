@@ -14,33 +14,35 @@ import static org.junit.Assert.*;
 
 public class SimpleReadPolicyTest {
 
+    private Connection connection;
     private DataSource<String, Integer> dataSource;
+    private SimpleReadPolicy<String, Integer> policy;
+    private Map<String, Integer> cacheMap;
+
+    private static final String TEST_KEY = "key1";
+    private static final Integer TEST_VALUE = 42;
+    private static final String SELECT_SQL = "SELECT value FROM table WHERE key = ?";
 
     @Before
     public void setUp() throws SQLException {
-        Connection connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
+        connection = TestDatabaseUtil.getConnection();
+        dataSource = new DataSource<>(connection);
+        policy = new SimpleReadPolicy<>();
+        cacheMap = new HashMap<>();
+        cacheMap.put(TEST_KEY, TEST_VALUE);
     }
 
     @Test
-    public void testRead() {
-        SimpleReadPolicy<String, Integer> policy = new SimpleReadPolicy<String, Integer>();
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
-        cacheMap.put("key1", 42);
-
-        Integer result = policy.read(cacheMap, "key1");
-
-        assertEquals(Integer.valueOf(42), result);
+    public void testRead() throws SQLException {
+        Integer result = policy.read(cacheMap, TEST_KEY);
+        assertEquals(TEST_VALUE, result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     @Test
-    public void testReadWithDataSource() {
-        SimpleReadPolicy<String, Integer> policy = new SimpleReadPolicy<String, Integer>();
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
-
-        cacheMap.put("key1", 42);
-        Integer result = policy.readWithDataSource(cacheMap, "key1", dataSource, "SELECT value FROM table WHERE key = ?");
-
-        assertEquals(Integer.valueOf(42), result);
+    public void testReadWithDataSource() throws SQLException {
+        Integer result = policy.readWithDataSource(cacheMap, TEST_KEY, dataSource, SELECT_SQL);
+        assertEquals(TEST_VALUE, result);
+        TestDatabaseUtil.clearTable(connection);
     }
 }

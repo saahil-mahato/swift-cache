@@ -14,22 +14,28 @@ import static org.junit.Assert.*;
 
 public class WriteAlwaysPolicyTest {
 
+    private static final String TEST_KEY = "key1";
+    private static final Integer TEST_VALUE = 42;
+    private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
+
+    private Connection connection;
     private DataSource<String, Integer> dataSource;
+    private WriteAlwaysPolicy<String, Integer> policy;
+    private Map<String, Integer> cacheMap;
 
     @Before
     public void setUp() throws SQLException {
-        Connection connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
+        connection = TestDatabaseUtil.getConnection();
+        dataSource = new DataSource<>(connection);
+        policy = new WriteAlwaysPolicy<>();
+        cacheMap = new HashMap<>();
     }
 
     @Test
-    public void testWrite() {
-        WriteAlwaysPolicy<String, Integer> policy = new WriteAlwaysPolicy<String, Integer>();
-        Map<String, Integer> cacheMap = new HashMap<String, Integer>();
+    public void testWrite() throws SQLException {
+        policy.write(cacheMap, TEST_KEY, TEST_VALUE, dataSource, INSERT_SQL);
 
-        policy.write(cacheMap, "key1", 42, dataSource, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
-
-        assertEquals(Integer.valueOf(42), cacheMap.get("key1"));
+        assertEquals(TEST_VALUE, cacheMap.get(TEST_KEY));
+        TestDatabaseUtil.clearTable(connection);
     }
 }
-

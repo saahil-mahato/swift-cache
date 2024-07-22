@@ -3,18 +3,10 @@ package org.swiftcache.cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.swiftcache.datasource.DataSource;
-import org.swiftcache.evictionstrategy.FIFOEvictionStrategy;
-import org.swiftcache.evictionstrategy.IEvictionStrategy;
-import org.swiftcache.evictionstrategy.LRUEvictionStrategy;
-import org.swiftcache.readingpolicy.IReadingPolicy;
-import org.swiftcache.readingpolicy.ReadThroughPolicy;
-import org.swiftcache.readingpolicy.RefreshAheadPolicy;
-import org.swiftcache.readingpolicy.SimpleReadPolicy;
+import org.swiftcache.evictionstrategy.*;
+import org.swiftcache.readingpolicy.*;
 import org.swiftcache.util.TestDatabaseUtil;
-import org.swiftcache.writingpolicy.IWritingPolicy;
-import org.swiftcache.writingpolicy.WriteAlwaysPolicy;
-import org.swiftcache.writingpolicy.WriteBehindPolicy;
-import org.swiftcache.writingpolicy.WriteIfAbsentPolicy;
+import org.swiftcache.writingpolicy.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,64 +22,64 @@ public class CacheTest {
     private Connection connection;
     private static final Logger logger = Logger.getLogger(DataSource.class.getName());
 
+    private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
+    private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
+    private static final String DELETE_SQL = "DELETE FROM test_table WHERE testKey = ?";
+
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<String, Integer>(connection);
-    }
-
-    private void clearTable() throws SQLException {
-        connection.createStatement().execute("DELETE FROM test_table");
+        dataSource = new DataSource<>(connection);
     }
 
     private void pauseExecution() {
         try {
-            Thread.sleep(1);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             logger.log(Level.SEVERE, "An error occurred while pausing execution", e);
         }
     }
 
     private void testPut(Cache<String, Integer> cache, String key, Integer value) throws SQLException {
-        clearTable();
-        cache.put(key, value, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        cache.put(key, value, INSERT_SQL);
         pauseExecution();
-        Integer result = dataSource.fetch(key, "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer result = dataSource.fetch(key, SELECT_SQL);
         assertEquals(value, result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     private void testGet(Cache<String, Integer> cache, String key, Integer value) throws SQLException {
-        clearTable();
-        cache.put(key, value, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        cache.put(key, value, INSERT_SQL);
         pauseExecution();
-        Integer result = cache.get(key, "SELECT testValue FROM test_table WHERE testKey = ?");
+        Integer result = cache.get(key, SELECT_SQL);
         assertEquals(value, result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     private void testRemove(Cache<String, Integer> cache, String key) throws SQLException {
-        clearTable();
-        cache.put(key, 1, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        cache.put(key, 1, INSERT_SQL);
         pauseExecution();
-        cache.remove(key, "DELETE FROM test_table WHERE testKey = ?");
-        Integer result = dataSource.fetch(key, "SELECT testValue FROM test_table WHERE testKey = ?");
+        cache.remove(key, DELETE_SQL);
+        Integer result = dataSource.fetch(key, SELECT_SQL);
         assertNull(result);
+        TestDatabaseUtil.clearTable(connection);
     }
 
     private void testSize(Cache<String, Integer> cache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
-        clearTable();
-        cache.put(key1, value1, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
-        cache.put(key2, value2, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        cache.put(key1, value1, INSERT_SQL);
+        cache.put(key2, value2, INSERT_SQL);
         pauseExecution();
         assertEquals(2, cache.size());
+        TestDatabaseUtil.clearTable(connection);
     }
 
     private void testClear(Cache<String, Integer> cache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
-        clearTable();
-        cache.put(key1, value1, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
-        cache.put(key2, value2, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+        cache.put(key1, value1, INSERT_SQL);
+        cache.put(key2, value2, INSERT_SQL);
         pauseExecution();
         cache.clear();
         assertEquals(0, cache.size());
+        TestDatabaseUtil.clearTable(connection);
     }
 
     @Test
@@ -120,7 +112,7 @@ public class CacheTest {
     }
 
     private void testCombination(IWritingPolicy<String, Integer> writingPolicy, IReadingPolicy<String, Integer> readingPolicy, IEvictionStrategy<String, Integer> evictionStrategy) throws SQLException {
-        Cache<String, Integer> cache = new Cache<String, Integer>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
+        Cache<String, Integer> cache = new Cache<>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
         String key1 = "key1";
         Integer value1 = 1;
         String key2 = "key2";
