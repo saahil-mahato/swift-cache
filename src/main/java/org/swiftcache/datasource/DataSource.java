@@ -42,6 +42,9 @@ public class DataSource<K, V> implements IDataSource<K, V> {
      */
     @SuppressWarnings("unchecked")
     public V fetch(K key, String sql) {
+        if (sql.length() < 1) {
+            return null;
+        }
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -75,6 +78,9 @@ public class DataSource<K, V> implements IDataSource<K, V> {
      * @param sql The SQL update statement to be executed, which should use parameters for the key and value.
      */
     public void store(K key, V value, String sql) {
+        if (sql.length() < 1) {
+            return;
+        }
         PreparedStatement statement = null;
         try {
             statement = this.connection.prepareStatement(sql);
@@ -102,6 +108,9 @@ public class DataSource<K, V> implements IDataSource<K, V> {
      * @param sql The SQL update statement to be executed, which should use a parameter for the key.
      */
     public void delete(K key, String sql) {
+        if (sql.length() < 1) {
+            return;
+        }
         PreparedStatement statement = null;
         try {
             statement = this.connection.prepareStatement(sql);

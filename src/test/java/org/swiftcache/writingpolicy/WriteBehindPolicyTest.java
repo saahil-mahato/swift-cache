@@ -52,7 +52,7 @@ public class WriteBehindPolicyTest {
 
     /**
      * Tests the {@link WriteBehindPolicy#write(Map, Object, Object, IDataSource, String)} method to ensure that
-     * it correctly writes data to the cache immediately while deferring the write to the data source.
+     * it correctly writes data to the cache immediately while deferring the write operation to the data source.
      * <p>
      * This test verifies that the value is stored in the cache, but not immediately in the data source.
      * It then waits for the asynchronous write to occur and verifies that the data source eventually contains

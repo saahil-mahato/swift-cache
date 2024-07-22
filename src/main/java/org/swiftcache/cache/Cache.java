@@ -3,6 +3,7 @@ package org.swiftcache.cache;
 import org.swiftcache.datasource.IDataSource;
 import org.swiftcache.evictionstrategy.IEvictionStrategy;
 import org.swiftcache.readingpolicy.IReadingPolicy;
+import org.swiftcache.readingpolicy.SimpleReadPolicy;
 import org.swiftcache.writingpolicy.IWritingPolicy;
 
 import java.util.LinkedHashMap;
@@ -106,7 +107,7 @@ public class Cache<K, V> implements ICache<K, V> {
                 }
             }
             this.writingPolicy.write(this.cacheMap, key, value, this.dataSource, storeSql);
-            this.evictionStrategy.access(key, this.evictionQueue);
+            this.evictionQueue.offer(key);
         } finally {
             this.lock.writeLock().unlock();
         }
@@ -125,7 +126,7 @@ public class Cache<K, V> implements ICache<K, V> {
         fetchSql = fetchSql.trim();
         try {
             V value;
-            if (fetchSql.length() == 0) {
+            if (getReadingPolicy() instanceof SimpleReadPolicy) {
                 value = this.readingPolicy.read(this.cacheMap, key);
             } else {
                 value = this.readingPolicy.readWithDataSource(this.cacheMap, key, this.dataSource, fetchSql);
@@ -172,6 +173,20 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     /**
+     * Returns the maximum number of entries allowed in the cache.
+     *
+     * @return The maximum number of entries allowed in the cache.
+     */
+    public long getMaxSize() {
+        this.lock.readLock().lock();
+        try {
+            return this.maxSize;
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    /**
      * Clears all entries from the cache.
      */
     public void clear() {
@@ -181,6 +196,48 @@ public class Cache<K, V> implements ICache<K, V> {
             this.evictionQueue.clear();
         } finally {
             this.lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the current eviction strategy used by the cache.
+     *
+     * @return The current {@code IEvictionStrategy<K, V>} instance.
+     */
+    public IEvictionStrategy<K, V> getEvictionStrategy() {
+        this.lock.readLock().lock();
+        try {
+            return this.evictionStrategy;
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the current reading policy used by the cache.
+     *
+     * @return The current {@code IReadingPolicy<K, V>} instance.
+     */
+    public IReadingPolicy<K, V> getReadingPolicy() {
+        this.lock.readLock().lock();
+        try {
+            return this.readingPolicy;
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the current writing policy used by the cache.
+     *
+     * @return The current {@code IWritingPolicy<K, V>} instance.
+     */
+    public IWritingPolicy<K, V> getWritingPolicy() {
+        this.lock.readLock().lock();
+        try {
+            return this.writingPolicy;
+        } finally {
+            this.lock.readLock().unlock();
         }
     }
 }

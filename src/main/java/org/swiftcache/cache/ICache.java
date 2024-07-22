@@ -1,5 +1,9 @@
 package org.swiftcache.cache;
 
+import org.swiftcache.evictionstrategy.IEvictionStrategy;
+import org.swiftcache.readingpolicy.IReadingPolicy;
+import org.swiftcache.writingpolicy.IWritingPolicy;
+
 /**
  * Represents a generic cache interface with basic cache operations.
  * <p>
@@ -61,4 +65,32 @@ public interface ICache<K, V> {
      * </p>
      */
     void clear();
+
+    /**
+     * Returns the maximum number of entries allowed in the cache.
+     *
+     * @return The maximum number of entries allowed in the cache.
+     */
+    long getMaxSize();
+
+    /**
+     * Returns the current eviction strategy used by the cache.
+     *
+     * @return The current {@code IEvictionStrategy<K, V>} instance.
+     */
+    IEvictionStrategy<K, V> getEvictionStrategy();
+
+    /**
+     * Returns the current reading policy used by the cache.
+     *
+     * @return The current {@code IReadingPolicy<K, V>} instance.
+     */
+    IReadingPolicy<K, V> getReadingPolicy();
+
+    /**
+     * Returns the current writing policy used by the cache.
+     *
+     * @return The current {@code IWritingPolicy<K, V>} instance.
+     */
+    IWritingPolicy<K, V> getWritingPolicy();
 }
