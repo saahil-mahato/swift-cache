@@ -3,7 +3,6 @@ package org.swiftcache.readingpolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.swiftcache.datasource.DataSource;
-import org.swiftcache.datasource.IDataSource;
 import org.swiftcache.util.TestDatabaseUtil;
 
 import java.sql.Connection;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class SimpleReadPolicyTest {
 

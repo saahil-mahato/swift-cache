@@ -91,27 +91,32 @@ public class CacheTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testAllCombinations() throws SQLException {
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteAlwaysPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
+        IWritingPolicy<String, Integer>[] writingPolicies = new IWritingPolicy[] {
+                new WriteAlwaysPolicy<String, Integer>(),
+                new WriteBehindPolicy<String, Integer>(),
+                new WriteIfAbsentPolicy<String, Integer>()
+        };
 
-        testCombination(new WriteBehindPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteBehindPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteBehindPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteBehindPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteBehindPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteBehindPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
+        IReadingPolicy<String, Integer>[] readingPolicies = new IReadingPolicy[] {
+                new ReadThroughPolicy<String, Integer>(),
+                new RefreshAheadPolicy<String, Integer>(1),
+                new SimpleReadPolicy<String, Integer>()
+        };
 
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new ReadThroughPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new RefreshAheadPolicy<String, Integer>(1000), new LRUEvictionStrategy<String, Integer>());
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new FIFOEvictionStrategy<String, Integer>());
-        testCombination(new WriteIfAbsentPolicy<String, Integer>(), new SimpleReadPolicy<String, Integer>(), new LRUEvictionStrategy<String, Integer>());
+        IEvictionStrategy<String, Integer>[] evictionStrategies = new IEvictionStrategy[] {
+                new FIFOEvictionStrategy<String, Integer>(),
+                new LRUEvictionStrategy<String, Integer>()
+        };
+
+        for (IWritingPolicy<String, Integer> writingPolicy : writingPolicies) {
+            for (IReadingPolicy<String, Integer> readingPolicy : readingPolicies) {
+                for (IEvictionStrategy<String, Integer> evictionStrategy : evictionStrategies) {
+                    testCombination(writingPolicy, readingPolicy, evictionStrategy);
+                }
+            }
+        }
     }
 
     private void testCombination(IWritingPolicy<String, Integer> writingPolicy, IReadingPolicy<String, Integer> readingPolicy, IEvictionStrategy<String, Integer> evictionStrategy) throws SQLException {

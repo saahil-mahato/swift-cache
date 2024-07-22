@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class RefreshAheadPolicyTest {
 
@@ -46,7 +45,7 @@ public class RefreshAheadPolicyTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testRead() {
-        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String, Integer>(100);
+        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String, Integer>(1);
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();
         policy.read(cacheMap, "key1");
     }

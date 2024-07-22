@@ -23,11 +23,11 @@ public class ReadThroughPolicyTest {
     }
 
     @Test
-    public void testReadWithDataSource() throws SQLException {
+    public void testReadWithDataSource() {
         ReadThroughPolicy<String, Integer> policy = new ReadThroughPolicy<String, Integer>();
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();
 
-        cacheMap.put("key1", 42);
+        dataSource.store("key1", 42, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
 
         Integer dataResult = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
         Integer policyResult = policy.readWithDataSource(cacheMap, "key1", dataSource, "SELECT testValue FROM test_table WHERE testKey = ?");

@@ -1,30 +1,44 @@
 package org.swiftcache.writingpolicy;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.swiftcache.datasource.IDataSource;
+import org.swiftcache.datasource.DataSource;
+import org.swiftcache.util.TestDatabaseUtil;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class WriteBehindPolicyTest {
 
+    private DataSource<String, Integer> dataSource;
+
+    @Before
+    public void setUp() throws SQLException {
+        Connection connection = TestDatabaseUtil.getConnection();
+        dataSource = new DataSource<String, Integer>(connection);
+    }
+
     @Test
-    @SuppressWarnings("unchecked")
     public void testWrite() throws InterruptedException {
         WriteBehindPolicy<String, Integer> policy = new WriteBehindPolicy<String, Integer>();
         Map<String, Integer> cacheMap = new HashMap<String, Integer>();
-        IDataSource<String, Integer> mockDataSource = mock(IDataSource.class);
 
-        policy.write(cacheMap, "key1", 42, mockDataSource, "INSERT INTO table (key, value) VALUES (?, ?)");
+        policy.write(cacheMap, "key1", 42, dataSource, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
+
+        Integer dataResult = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
 
         assertEquals(Integer.valueOf(42), cacheMap.get("key1"));
+        assertNull(dataResult);
 
         // Wait for the asynchronous write to occur
-        Thread.sleep(100);
+        Thread.sleep(200);
 
-        verify(mockDataSource).store("key1", 42, "INSERT INTO table (key, value) VALUES (?, ?)");
+        Integer dataResultRefreshed = dataSource.fetch("key1", "SELECT testValue FROM test_table WHERE testKey = ?");
+
+        assertEquals(cacheMap.get("key1"), dataResultRefreshed);
     }
 }

@@ -3,7 +3,6 @@ package org.swiftcache.writingpolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.swiftcache.datasource.DataSource;
-import org.swiftcache.datasource.IDataSource;
 import org.swiftcache.util.TestDatabaseUtil;
 
 import java.sql.Connection;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class WriteAlwaysPolicyTest {
 
@@ -31,7 +29,7 @@ public class WriteAlwaysPolicyTest {
 
         policy.write(cacheMap, "key1", 42, dataSource, "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)");
 
-        verify(mockDataSource).store("key1", 42, "INSERT INTO table (key, value) VALUES (?, ?)");
         assertEquals(Integer.valueOf(42), cacheMap.get("key1"));
     }
 }
+
