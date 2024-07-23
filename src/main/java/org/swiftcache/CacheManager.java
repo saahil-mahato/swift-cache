@@ -45,33 +45,29 @@ public class CacheManager {
      * </p>
      *
      */
-    private static void initializeCache() {
+    private static void initializeCache() throws RuntimeException, SQLException, IOException {
         Properties config = new Properties();
-        try {
-            InputStream input = CacheManager.class.getClassLoader().getResourceAsStream("config.properties");
-            if (input == null) {
-                throw new RuntimeException("Config file not found");
-            }
-            config.load(input);
-
-            String dbUrl = config.getProperty("db.url");
-            String dbUser = config.getProperty("db.user");
-            String dbPassword = config.getProperty("db.password");
-            long maxSize = Integer.parseInt(config.getProperty("cache.maxSize"));
-            String evictionStrategy = config.getProperty("cache.evictionStrategy");
-            String readPolicy = config.getProperty("cache.readPolicy");
-            String writePolicy = config.getProperty("cache.writePolicy");
-
-            Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            DataSource<Object, Object> dataSource = new DataSource<>(connection);
-
-            cache = new Cache<>(maxSize, dataSource,
-                    createEvictionStrategy(evictionStrategy),
-                    createWritingPolicy(writePolicy),
-                    createReadingPolicy(readPolicy));
-        } catch (RuntimeException | SQLException | IOException e) {
-            throw new RuntimeException(e);
+        InputStream input = CacheManager.class.getClassLoader().getResourceAsStream("config.properties");
+        if (input == null) {
+            throw new RuntimeException("Config file not found");
         }
+        config.load(input);
+
+        String dbUrl = config.getProperty("db.url");
+        String dbUser = config.getProperty("db.user");
+        String dbPassword = config.getProperty("db.password");
+        long maxSize = Integer.parseInt(config.getProperty("cache.maxSize"));
+        String evictionStrategy = config.getProperty("cache.evictionStrategy");
+        String readPolicy = config.getProperty("cache.readPolicy");
+        String writePolicy = config.getProperty("cache.writePolicy");
+
+        Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+        DataSource<Object, Object> dataSource = new DataSource<Object,Object>(connection);
+
+        cache = new Cache<Object,Object>(maxSize, dataSource,
+                createEvictionStrategy(evictionStrategy),
+                createWritingPolicy(writePolicy),
+                createReadingPolicy(readPolicy));
     }
 
     /**
@@ -92,9 +88,9 @@ public class CacheManager {
      */
     private static IEvictionStrategy<Object, Object> createEvictionStrategy(String strategy) {
         if ("FIFO".equals(strategy)) {
-            return new FIFOEvictionStrategy<>();
+            return new FIFOEvictionStrategy<Object,Object>();
         } else if ("LRU".equals(strategy)) {
-            return new LRUEvictionStrategy<>();
+            return new LRUEvictionStrategy<Object,Object>();
         } else {
             throw new IllegalArgumentException("Invalid eviction strategy: " + strategy);
         }
@@ -109,11 +105,11 @@ public class CacheManager {
      */
     private static IReadingPolicy<Object, Object> createReadingPolicy(String policy) {
         if ("ReadThrough".equals(policy)) {
-            return new ReadThroughPolicy<>();
+            return new ReadThroughPolicy<Object,Object>();
         } else if ("RefreshAhead".equals(policy)) {
-            return new RefreshAheadPolicy<>(1); // Example refresh interval
+            return new RefreshAheadPolicy<Object,Object>(1); // Example refresh interval
         } else if ("Simple".equals(policy)) {
-            return new SimpleReadPolicy<>();
+            return new SimpleReadPolicy<Object,Object>();
         } else {
             throw new IllegalArgumentException("Invalid reading policy: " + policy);
         }
@@ -128,11 +124,11 @@ public class CacheManager {
      */
     private static IWritingPolicy<Object, Object> createWritingPolicy(String policy) {
         if ("WriteAlways".equals(policy)) {
-            return new WriteAlwaysPolicy<>();
+            return new WriteAlwaysPolicy<Object,Object>();
         } else if ("WriteBehind".equals(policy)) {
-            return new WriteBehindPolicy<>();
+            return new WriteBehindPolicy<Object,Object>();
         } else if ("WriteIfAbsent".equals(policy)) {
-            return new WriteIfAbsentPolicy<>();
+            return new WriteIfAbsentPolicy<Object,Object>();
         } else {
             throw new IllegalArgumentException("Invalid writing policy: " + policy);
         }

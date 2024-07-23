@@ -42,9 +42,9 @@ public class WriteAlwaysPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
-        policy = new WriteAlwaysPolicy<>();
-        cacheMap = new HashMap<>();
+        dataSource = new DataSource<String,Integer>(connection);
+        policy = new WriteAlwaysPolicy<String,Integer>();
+        cacheMap = new HashMap<String,Integer>();
     }
 
     /**

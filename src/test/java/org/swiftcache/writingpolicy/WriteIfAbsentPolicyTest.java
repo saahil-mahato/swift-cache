@@ -43,9 +43,9 @@ public class WriteIfAbsentPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
-        policy = new WriteIfAbsentPolicy<>();
-        cacheMap = new HashMap<>();
+        dataSource = new DataSource<String,Integer>(connection);
+        policy = new WriteIfAbsentPolicy<String,Integer>();
+        cacheMap = new HashMap<String,Integer>();
     }
 
     /**

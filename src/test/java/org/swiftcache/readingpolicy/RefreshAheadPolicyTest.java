@@ -41,7 +41,7 @@ public class RefreshAheadPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
+        dataSource = new DataSource<String,Integer>(connection);
     }
 
     /**
@@ -59,8 +59,8 @@ public class RefreshAheadPolicyTest {
      */
     @Test
     public void testReadWithDataSource() throws InterruptedException, SQLException {
-        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<>(REFRESH_INTERVAL);
-        Map<String, Integer> cacheMap = new HashMap<>();
+        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String,Integer>(REFRESH_INTERVAL);
+        Map<String, Integer> cacheMap = new HashMap<String,Integer>();
 
         int initialValue = 42;
         int updatedValue = 43;
@@ -98,8 +98,8 @@ public class RefreshAheadPolicyTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testRead() throws SQLException {
-        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<>(1);
-        Map<String, Integer> cacheMap = new HashMap<>();
+        RefreshAheadPolicy<String, Integer> policy = new RefreshAheadPolicy<String,Integer>(1);
+        Map<String, Integer> cacheMap = new HashMap<String,Integer>();
         policy.read(cacheMap, TEST_KEY);
         TestDatabaseUtil.clearTable(connection);
     }

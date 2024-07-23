@@ -45,9 +45,9 @@ public class WriteBehindPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
-        policy = new WriteBehindPolicy<>();
-        cacheMap = new HashMap<>();
+        dataSource = new DataSource<String,Integer>(connection);
+        policy = new WriteBehindPolicy<String,Integer>();
+        cacheMap = new HashMap<String,Integer>();
     }
 
     /**

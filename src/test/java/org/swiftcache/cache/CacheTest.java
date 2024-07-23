@@ -43,7 +43,7 @@ public class CacheTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
+        dataSource = new DataSource<String,Integer>(connection);
     }
 
     /**
@@ -199,7 +199,7 @@ public class CacheTest {
      * @throws SQLException if there is an error accessing the database
      */
     private void testCombination(IWritingPolicy<String, Integer> writingPolicy, IReadingPolicy<String, Integer> readingPolicy, IEvictionStrategy<String, Integer> evictionStrategy) throws SQLException {
-        Cache<String, Integer> cache = new Cache<>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
+        Cache<String, Integer> cache = new Cache<String,Integer>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
         String key1 = "key1";
         Integer value1 = 1;
         String key2 = "key2";

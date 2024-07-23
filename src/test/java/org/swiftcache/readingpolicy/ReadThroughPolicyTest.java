@@ -38,7 +38,7 @@ public class ReadThroughPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
+        dataSource = new DataSource<String,Integer>(connection);
     }
 
     /**
@@ -53,8 +53,8 @@ public class ReadThroughPolicyTest {
      */
     @Test
     public void testReadWithDataSource() throws SQLException {
-        ReadThroughPolicy<String, Integer> policy = new ReadThroughPolicy<>();
-        Map<String, Integer> cacheMap = new HashMap<>();
+        ReadThroughPolicy<String, Integer> policy = new ReadThroughPolicy<String,Integer>();
+        Map<String, Integer> cacheMap = new HashMap<String,Integer>();
         String testKey = "key1";
         Integer testValue = 42;
 
@@ -85,8 +85,8 @@ public class ReadThroughPolicyTest {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testRead() throws SQLException {
-        ReadThroughPolicy<String, Integer> policy = new ReadThroughPolicy<>();
-        Map<String, Integer> cacheMap = new HashMap<>();
+        ReadThroughPolicy<String, Integer> policy = new ReadThroughPolicy<String,Integer>();
+        Map<String, Integer> cacheMap = new HashMap<String,Integer>();
         policy.read(cacheMap, "key1");
         TestDatabaseUtil.clearTable(connection);
     }

@@ -36,7 +36,7 @@ public class DataSourceTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
+        dataSource = new DataSource<String,Integer>(connection);
     }
 
     /**

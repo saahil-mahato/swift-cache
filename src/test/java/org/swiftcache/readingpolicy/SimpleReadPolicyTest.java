@@ -42,9 +42,9 @@ public class SimpleReadPolicyTest {
     @Before
     public void setUp() throws SQLException {
         connection = TestDatabaseUtil.getConnection();
-        dataSource = new DataSource<>(connection);
-        policy = new SimpleReadPolicy<>();
-        cacheMap = new HashMap<>();
+        dataSource = new DataSource<String,Integer>(connection);
+        policy = new SimpleReadPolicy<String,Integer>();
+        cacheMap = new HashMap<String,Integer>();
         cacheMap.put(TEST_KEY, TEST_VALUE);
     }
 

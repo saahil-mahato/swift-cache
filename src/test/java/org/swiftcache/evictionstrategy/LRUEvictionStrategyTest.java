@@ -30,9 +30,9 @@ public class LRUEvictionStrategyTest {
      */
     @Test
     public void testEvict() {
-        LRUEvictionStrategy<String, Integer> strategy = new LRUEvictionStrategy<>();
-        Map<String, Integer> cacheMap = new LinkedHashMap<>();
-        Queue<String> evictionQueue = new LinkedList<>();
+        LRUEvictionStrategy<String, Integer> strategy = new LRUEvictionStrategy<String,Integer>();
+        Map<String, Integer> cacheMap = new LinkedHashMap<String,Integer>();
+        Queue<String> evictionQueue = new LinkedList<String>();
 
         // Adding keys to the eviction queue
         evictionQueue.offer("key1");
