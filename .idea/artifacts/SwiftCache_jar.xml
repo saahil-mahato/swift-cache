@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SwiftCache:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SwiftCache_jar</output-path>
+    <root id="archive" name="SwiftCache.jar">
+      <element id="module-output" name="SwiftCache" />
+    </root>
+  </artifact>
+</component>
