@@ -1,7 +1,7 @@
 package org.swiftcache;
 
-import org.swiftcache.cache.Cache;
-import org.swiftcache.cache.CacheConfig;
+import org.swiftcache.cache.SwiftCache;
+import org.swiftcache.cache.SwiftCacheConfig;
 import org.swiftcache.datasource.DataSource;
 import org.swiftcache.evictionstrategy.*;
 import org.swiftcache.readingpolicy.*;
@@ -15,13 +15,13 @@ import java.sql.SQLException;
  * Manages the initialization and configuration of the cache system.
  * Provides methods for creating and configuring a cache instance and managing database tables for testing purposes.
  */
-public class CacheManager {
+public class SwiftCacheManager {
 
-    private static Cache<Object, Object> cache;
+    private static SwiftCache<Object, Object> swiftCache;
     private static Connection connection;
 
     // Private constructor to prevent instantiation
-    private CacheManager() {
+    private SwiftCacheManager() {
         // Prevent instantiation
     }
 
@@ -32,11 +32,11 @@ public class CacheManager {
      * @return the singleton cache instance
      * @throws RuntimeException if initialization fails
      */
-    public static synchronized Cache<Object, Object> getCache(CacheConfig config) {
-        if (cache == null) {
+    public static synchronized SwiftCache<Object, Object> getCache(SwiftCacheConfig config) {
+        if (swiftCache == null) {
             initializeCache(config);
         }
-        return cache;
+        return swiftCache;
     }
 
     /**
@@ -45,12 +45,12 @@ public class CacheManager {
      * @param config the configuration settings for initializing the cache
      * @throws RuntimeException if database connection fails
      */
-    private static void initializeCache(CacheConfig config) {
+    private static void initializeCache(SwiftCacheConfig config) {
         try {
             connection = DriverManager.getConnection(config.getDbUrl(), config.getDbUser(), config.getDbPassword());
             DataSource<Object, Object> dataSource = new DataSource<>(connection);
 
-            cache = new Cache<>(config.getMaxSize(), dataSource,
+            swiftCache = new SwiftCache<>(config.getMaxSize(), dataSource,
                     createEvictionStrategy(config.getEvictionStrategy()),
                     createWritingPolicy(config.getWritePolicy()),
                     createReadingPolicy(config.getReadPolicy()));

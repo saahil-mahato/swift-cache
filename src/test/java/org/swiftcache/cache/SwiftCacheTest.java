@@ -20,11 +20,11 @@ import static org.junit.Assert.assertNull;
  * Unit tests for the Cache class, covering various combinations of eviction strategies,
  * reading policies, and writing policies.
  */
-public class CacheTest {
+public class SwiftCacheTest {
 
     private DataSource<String, Integer> dataSource;
     private Connection connection;
-    private static final Logger logger = Logger.getLogger(CacheTest.class.getName());
+    private static final Logger logger = Logger.getLogger(SwiftCacheTest.class.getName());
 
     private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
     private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
@@ -53,13 +53,13 @@ public class CacheTest {
     /**
      * Tests the `put` method of the Cache class.
      *
-     * @param cache the cache instance to test
+     * @param swiftCache the cache instance to test
      * @param key the key to insert
      * @param value the value to insert
      * @throws SQLException if a database access error occurs
      */
-    private void testPut(Cache<String, Integer> cache, String key, Integer value) throws SQLException {
-        cache.put(key, value, INSERT_SQL);
+    private void testPut(SwiftCache<String, Integer> swiftCache, String key, Integer value) throws SQLException {
+        swiftCache.put(key, value, INSERT_SQL);
         pauseExecution();
         Integer result = dataSource.fetch(key, SELECT_SQL);
         assertEquals(value, result);
@@ -69,15 +69,15 @@ public class CacheTest {
     /**
      * Tests the `get` method of the Cache class.
      *
-     * @param cache the cache instance to test
+     * @param swiftCache the cache instance to test
      * @param key the key to retrieve
      * @param value the expected value
      * @throws SQLException if a database access error occurs
      */
-    private void testGet(Cache<String, Integer> cache, String key, Integer value) throws SQLException {
-        cache.put(key, value, INSERT_SQL);
+    private void testGet(SwiftCache<String, Integer> swiftCache, String key, Integer value) throws SQLException {
+        swiftCache.put(key, value, INSERT_SQL);
         pauseExecution();
-        Integer result = cache.get(key, SELECT_SQL);
+        Integer result = swiftCache.get(key, SELECT_SQL);
         assertEquals(value, result);
         TestDatabaseUtil.clearTable(connection);
     }
@@ -85,14 +85,14 @@ public class CacheTest {
     /**
      * Tests the `remove` method of the Cache class.
      *
-     * @param cache the cache instance to test
+     * @param swiftCache the cache instance to test
      * @param key the key to remove
      * @throws SQLException if a database access error occurs
      */
-    private void testRemove(Cache<String, Integer> cache, String key) throws SQLException {
-        cache.put(key, 1, INSERT_SQL);
+    private void testRemove(SwiftCache<String, Integer> swiftCache, String key) throws SQLException {
+        swiftCache.put(key, 1, INSERT_SQL);
         pauseExecution();
-        cache.remove(key, DELETE_SQL);
+        swiftCache.remove(key, DELETE_SQL);
         Integer result = dataSource.fetch(key, SELECT_SQL);
         assertNull(result);
         TestDatabaseUtil.clearTable(connection);
@@ -101,37 +101,37 @@ public class CacheTest {
     /**
      * Tests the `size` method of the Cache class.
      *
-     * @param cache the cache instance to test
+     * @param swiftCache the cache instance to test
      * @param key1 the first key
      * @param value1 the value for the first key
      * @param key2 the second key
      * @param value2 the value for the second key
      * @throws SQLException if a database access error occurs
      */
-    private void testSize(Cache<String, Integer> cache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
-        cache.put(key1, value1, INSERT_SQL);
-        cache.put(key2, value2, INSERT_SQL);
+    private void testSize(SwiftCache<String, Integer> swiftCache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
+        swiftCache.put(key1, value1, INSERT_SQL);
+        swiftCache.put(key2, value2, INSERT_SQL);
         pauseExecution();
-        assertEquals(2, cache.size());
+        assertEquals(2, swiftCache.size());
         TestDatabaseUtil.clearTable(connection);
     }
 
     /**
      * Tests the `clear` method of the Cache class.
      *
-     * @param cache the cache instance to test
+     * @param swiftCache the cache instance to test
      * @param key1 the first key
      * @param value1 the value for the first key
      * @param key2 the second key
      * @param value2 the value for the second key
      * @throws SQLException if a database access error occurs
      */
-    private void testClear(Cache<String, Integer> cache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
-        cache.put(key1, value1, INSERT_SQL);
-        cache.put(key2, value2, INSERT_SQL);
+    private void testClear(SwiftCache<String, Integer> swiftCache, String key1, Integer value1, String key2, Integer value2) throws SQLException {
+        swiftCache.put(key1, value1, INSERT_SQL);
+        swiftCache.put(key2, value2, INSERT_SQL);
         pauseExecution();
-        cache.clear();
-        assertEquals(0, cache.size());
+        swiftCache.clear();
+        assertEquals(0, swiftCache.size());
         TestDatabaseUtil.clearTable(connection);
     }
 
@@ -178,16 +178,16 @@ public class CacheTest {
      * @throws SQLException if a database access error occurs
      */
     private void testCombination(IWritingPolicy<String, Integer> writingPolicy, IReadingPolicy<String, Integer> readingPolicy, IEvictionStrategy<String, Integer> evictionStrategy) throws SQLException {
-        Cache<String, Integer> cache = new Cache<>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
+        SwiftCache<String, Integer> swiftCache = new SwiftCache<>(3, dataSource, evictionStrategy, writingPolicy, readingPolicy);
         String key1 = "key1";
         Integer value1 = 1;
         String key2 = "key2";
         Integer value2 = 2;
 
-        testPut(cache, key1, value1);
-        testGet(cache, key1, value1);
-        testRemove(cache, key1);
-        testSize(cache, key1, value1, key2, value2);
-        testClear(cache, key1, value1, key2, value2);
+        testPut(swiftCache, key1, value1);
+        testGet(swiftCache, key1, value1);
+        testRemove(swiftCache, key1);
+        testSize(swiftCache, key1, value1, key2, value2);
+        testClear(swiftCache, key1, value1, key2, value2);
     }
 }

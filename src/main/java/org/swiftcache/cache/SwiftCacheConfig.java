@@ -3,7 +3,7 @@ package org.swiftcache.cache;
 /**
  * Configuration class for setting up the cache.
  */
-public class CacheConfig {
+public class SwiftCacheConfig {
     private final String dbUrl;
 
     private final String dbUser;
@@ -29,8 +29,8 @@ public class CacheConfig {
      * @param readPolicy        the read policy to be used by the cache
      * @param writePolicy       the write policy to be used by the cache
      */
-    public CacheConfig(String dbUrl, String dbUser, String dbPassword, long maxSize,
-                       String evictionStrategy, String readPolicy, String writePolicy) {
+    public SwiftCacheConfig(String dbUrl, String dbUser, String dbPassword, long maxSize,
+                            String evictionStrategy, String readPolicy, String writePolicy) {
         this.dbUrl = dbUrl;
         this.dbUser = dbUser;
         this.dbPassword = dbPassword;

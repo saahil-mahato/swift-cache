@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <K> the type of keys maintained by this cache
  * @param <V> the type of mapped values
  */
-public class Cache<K, V> {
+public class SwiftCache<K, V> {
 
     private final long maxSize;
 
@@ -46,11 +46,11 @@ public class Cache<K, V> {
      * @param writingPolicy    the policy used for writing entries to the cache
      * @param readingPolicy    the policy used for reading entries from the cache
      */
-    public Cache(long maxSize,
-                 DataSource<K, V> dataSource,
-                 IEvictionStrategy<K, V> evictionStrategy,
-                 IWritingPolicy<K, V> writingPolicy,
-                 IReadingPolicy<K, V> readingPolicy) {
+    public SwiftCache(long maxSize,
+                      DataSource<K, V> dataSource,
+                      IEvictionStrategy<K, V> evictionStrategy,
+                      IWritingPolicy<K, V> writingPolicy,
+                      IReadingPolicy<K, V> readingPolicy) {
         this.maxSize = maxSize;
         this.cacheMap = new LinkedHashMap<>((int) maxSize, 0.75f, true);
         this.evictionQueue = new LinkedList<>();
