@@ -1,5 +1,8 @@
 package org.swiftcache.cache;
 
+/**
+ * Configuration class for setting up the cache.
+ */
 public class CacheConfig {
     private final String dbUrl;
 
@@ -15,6 +18,17 @@ public class CacheConfig {
 
     private final String writePolicy;
 
+    /**
+     * Constructs a new CacheConfig instance with the specified parameters.
+     *
+     * @param dbUrl             the URL of the database
+     * @param dbUser            the database user name
+     * @param dbPassword        the database password
+     * @param maxSize           the maximum size of the cache
+     * @param evictionStrategy  the eviction strategy to be used by the cache
+     * @param readPolicy        the read policy to be used by the cache
+     * @param writePolicy       the write policy to be used by the cache
+     */
     public CacheConfig(String dbUrl, String dbUser, String dbPassword, long maxSize,
                        String evictionStrategy, String readPolicy, String writePolicy) {
         this.dbUrl = dbUrl;
@@ -26,17 +40,66 @@ public class CacheConfig {
         this.writePolicy = writePolicy;
     }
 
-    public String getDbUrl() { return dbUrl; }
+    /**
+     * Returns the URL of the database.
+     *
+     * @return the database URL
+     */
+    public String getDbUrl() {
+        return dbUrl;
+    }
 
-    public String getDbUser() { return dbUser; }
+    /**
+     * Returns the database user name.
+     *
+     * @return the database user name
+     */
+    public String getDbUser() {
+        return dbUser;
+    }
 
-    public String getDbPassword() { return dbPassword; }
+    /**
+     * Returns the database password.
+     *
+     * @return the database password
+     */
+    public String getDbPassword() {
+        return dbPassword;
+    }
 
-    public long getMaxSize() { return maxSize; }
+    /**
+     * Returns the maximum size of the cache.
+     *
+     * @return the maximum size of the cache
+     */
+    public long getMaxSize() {
+        return maxSize;
+    }
 
-    public String getEvictionStrategy() { return evictionStrategy; }
+    /**
+     * Returns the eviction strategy used by the cache.
+     *
+     * @return the eviction strategy
+     */
+    public String getEvictionStrategy() {
+        return evictionStrategy;
+    }
 
-    public String getReadPolicy() { return readPolicy; }
+    /**
+     * Returns the read policy used by the cache.
+     *
+     * @return the read policy
+     */
+    public String getReadPolicy() {
+        return readPolicy;
+    }
 
-    public String getWritePolicy() { return writePolicy; }
+    /**
+     * Returns the write policy used by the cache.
+     *
+     * @return the write policy
+     */
+    public String getWritePolicy() {
+        return writePolicy;
+    }
 }

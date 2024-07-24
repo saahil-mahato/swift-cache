@@ -11,17 +11,27 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
+/**
+ * Manages the initialization and configuration of the cache system.
+ * Provides methods for creating and configuring a cache instance and managing database tables for testing purposes.
+ */
 public class CacheManager {
 
     private static Cache<Object, Object> cache;
-
     private static Connection connection;
 
+    // Private constructor to prevent instantiation
     private CacheManager() {
-        // Private constructor to prevent instantiation
+        // Prevent instantiation
     }
 
+    /**
+     * Retrieves the singleton cache instance, initializing it if necessary.
+     *
+     * @param config the configuration settings for initializing the cache
+     * @return the singleton cache instance
+     * @throws RuntimeException if initialization fails
+     */
     public static synchronized Cache<Object, Object> getCache(CacheConfig config) {
         if (cache == null) {
             initializeCache(config);
@@ -29,6 +39,12 @@ public class CacheManager {
         return cache;
     }
 
+    /**
+     * Initializes the cache and sets up the database connection using the provided configuration.
+     *
+     * @param config the configuration settings for initializing the cache
+     * @throws RuntimeException if database connection fails
+     */
     private static void initializeCache(CacheConfig config) {
         try {
             connection = DriverManager.getConnection(config.getDbUrl(), config.getDbUser(), config.getDbPassword());
@@ -43,24 +59,46 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Creates the test table in the database if it does not already exist.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     public static void createTestTable() throws SQLException {
         connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS test_table (testKey VARCHAR(255) PRIMARY KEY, testValue INTEGER);"
         );
     }
 
+    /**
+     * Clears all data from the test table.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     public static void clearTestTable() throws SQLException {
         connection.createStatement().execute(
                 "DELETE FROM test_table;"
         );
     }
 
+    /**
+     * Deletes the test table from the database.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     public static void deleteTestTable() throws SQLException {
         connection.createStatement().execute(
                 "DROP TABLE test_table;"
         );
     }
 
+    /**
+     * Creates an eviction strategy based on the specified strategy type.
+     *
+     * @param strategy the type of eviction strategy (e.g., "FIFO", "LRU")
+     * @return an instance of the specified eviction strategy
+     * @throws IllegalArgumentException if the strategy type is invalid
+     */
     private static IEvictionStrategy<Object, Object> createEvictionStrategy(String strategy) {
         if ("FIFO".equals(strategy)) {
             return new FIFOEvictionStrategy<>();
@@ -71,6 +109,13 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Creates a reading policy based on the specified policy type.
+     *
+     * @param policy the type of reading policy (e.g., "ReadThrough", "RefreshAhead", "Simple")
+     * @return an instance of the specified reading policy
+     * @throws IllegalArgumentException if the policy type is invalid
+     */
     private static IReadingPolicy<Object, Object> createReadingPolicy(String policy) {
         if ("ReadThrough".equals(policy)) {
             return new ReadThroughPolicy<>();
@@ -83,6 +128,13 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Creates a writing policy based on the specified policy type.
+     *
+     * @param policy the type of writing policy (e.g., "WriteAlways", "WriteBehind", "WriteIfAbsent")
+     * @return an instance of the specified writing policy
+     * @throws IllegalArgumentException if the policy type is invalid
+     */
     private static IWritingPolicy<Object, Object> createWritingPolicy(String policy) {
         if ("WriteAlways".equals(policy)) {
             return new WriteAlwaysPolicy<>();

@@ -12,16 +12,36 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 
-
+/**
+ * Unit tests for the {@link CacheManager} class.
+ *
+ * This class tests various functionalities of the cache, including:
+ * - Basic cache operations (put, get, remove, clear)
+ * - Eviction strategy behavior
+ * - Reading policy behavior
+ * - Writing policy behavior
+ *
+ * Uses an in-memory H2 database for testing.
+ */
 public class CacheManagerTest {
 
+    // SQL queries for testing
     private static final String INSERT_SQL = "INSERT INTO test_table (testKey, testValue) VALUES (?, ?)";
     private static final String SELECT_SQL = "SELECT testValue FROM test_table WHERE testKey = ?";
     private static final String DELETE_SQL = "DELETE FROM test_table WHERE testKey = ?";
 
+    // Cache instance and configuration
     private Cache<Object, Object> cache;
     private CacheConfig cacheConfig;
 
+    /**
+     * Sets up the test environment.
+     *
+     * Initializes the cache configuration with test settings and creates a cache instance.
+     * Also sets up the database table for testing.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Before
     public void setUp() throws SQLException {
         // Initialize CacheConfig with test settings
@@ -41,6 +61,13 @@ public class CacheManagerTest {
         CacheManager.createTestTable();
     }
 
+    /**
+     * Tests the basic put and get operations of the cache.
+     *
+     * Verifies that a value put into the cache can be retrieved correctly.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testPutAndGet() throws SQLException {
         CacheManager.clearTestTable();
@@ -49,6 +76,13 @@ public class CacheManagerTest {
         assertEquals("Value should be retrieved from cache", 1, cache.get("key1", SELECT_SQL));
     }
 
+    /**
+     * Tests the eviction strategy of the cache.
+     *
+     * Verifies that the least recently used entries are evicted when the cache exceeds its maximum size.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testEvictionStrategy() throws SQLException {
         CacheManager.clearTestTable();
@@ -76,6 +110,13 @@ public class CacheManagerTest {
         assertEquals("Recently accessed key should be in cache", 4, cache.get("key4", SELECT_SQL));
     }
 
+    /**
+     * Tests the reading policy of the cache.
+     *
+     * Verifies that the value can be retrieved from the data source if the cache is cleared.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testReadingPolicy() throws SQLException {
         CacheManager.clearTestTable();
@@ -89,6 +130,13 @@ public class CacheManagerTest {
         assertEquals("Value should be retrieved from data source", 1, cache.get("key1", SELECT_SQL));
     }
 
+    /**
+     * Tests the writing policy of the cache.
+     *
+     * Verifies that the value is correctly written to both the cache and the data source.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testWritingPolicy() throws SQLException {
         CacheManager.clearTestTable();
@@ -101,6 +149,13 @@ public class CacheManagerTest {
         assertEquals("Value should still be retrievable from data source", 1, cache.get("key1", SELECT_SQL));
     }
 
+    /**
+     * Tests the remove operation of the cache.
+     *
+     * Verifies that a removed item is no longer present in both the cache and the data source.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testRemove() throws SQLException {
         CacheManager.clearTestTable();
@@ -110,6 +165,13 @@ public class CacheManagerTest {
         assertNull("Removed item should not be in cache or data source", cache.get("key1", SELECT_SQL));
     }
 
+    /**
+     * Tests the clear operation of the cache.
+     *
+     * Verifies that clearing the cache removes items from the cache but not from the data source.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     public void testClear() throws SQLException {
         CacheManager.clearTestTable();
@@ -129,18 +191,33 @@ public class CacheManagerTest {
         CacheManager.deleteTestTable();
     }
 
+    /**
+     * Tests the retrieval of the eviction strategy from the cache.
+     *
+     * Verifies that the eviction strategy is correctly retrieved from the cache.
+     */
     @Test
     public void testGetEvictionStrategy() {
         IEvictionStrategy<Object, Object> evictionStrategy = cache.getEvictionStrategy();
         assertNotNull("Eviction strategy should not be null", evictionStrategy);
     }
 
+    /**
+     * Tests the retrieval of the reading policy from the cache.
+     *
+     * Verifies that the reading policy is correctly retrieved from the cache.
+     */
     @Test
     public void testGetReadingPolicy() {
         IReadingPolicy<Object, Object> readingPolicy = cache.getReadingPolicy();
         assertNotNull("Reading policy should not be null", readingPolicy);
     }
 
+    /**
+     * Tests the retrieval of the writing policy from the cache.
+     *
+     * Verifies that the writing policy is correctly retrieved from the cache.
+     */
     @Test
     public void testGetWritingPolicy() {
         IWritingPolicy<Object, Object> writingPolicy = cache.getWritingPolicy();
