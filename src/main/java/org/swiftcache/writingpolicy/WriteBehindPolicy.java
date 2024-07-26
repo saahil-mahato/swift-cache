@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 /**
  * This class implements the Write-Behind writing policy for a cache.
- *
  * In Write-Behind policy, writes are first updated in the cache, and then asynchronously
  * written to the data source in a background thread. This policy improves write performance
  * by reducing the number of synchronous data source interactions, but it introduces a window
