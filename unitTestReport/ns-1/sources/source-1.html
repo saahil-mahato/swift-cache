@@ -1,0 +1,222 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SwiftCacheManager</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache</a>
+</div>
+
+<h1>Coverage Summary for Class: SwiftCacheManager (org.swiftcache)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SwiftCacheManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.2%
+  </span>
+  <span class="absValue">
+    (13/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (24/27)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache;
+&nbsp;
+&nbsp;import org.swiftcache.CacheRepository.ICacheRepository;
+&nbsp;import org.swiftcache.cache.SwiftCache;
+&nbsp;import org.swiftcache.cache.SwiftCacheConfig;
+&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;import org.swiftcache.evictionstrategy.*;
+&nbsp;import org.swiftcache.readingpolicy.*;
+&nbsp;import org.swiftcache.writingpolicy.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Manages the creation and retrieval of SwiftCache instances.
+&nbsp; * This class simplifies the process of configuring and creating SwiftCache instances
+&nbsp; * by handling the creation of necessary components based on the provided configuration.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+&nbsp;public class SwiftCacheManager&lt;K, V&gt; {
+&nbsp;
+&nbsp;    private SwiftCache&lt;K, V&gt; swiftCache;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new SwiftCacheManager instance.
+&nbsp;     * Initializes a SwiftCache instance based on the provided configuration and cache repository.
+&nbsp;     *
+&nbsp;     * @param config         The configuration parameters for the cache.
+&nbsp;     * @param cacheRepository The underlying cache repository.
+&nbsp;     */
+<b class="fc">&nbsp;    public SwiftCacheManager(SwiftCacheConfig config, ICacheRepository&lt;K, V&gt; cacheRepository) {</b>
+<b class="fc">&nbsp;        initializeCache(config, cacheRepository);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the initialized SwiftCache instance.
+&nbsp;     *
+&nbsp;     * @return The SwiftCache instance.
+&nbsp;     */
+&nbsp;    public SwiftCache&lt;K, V&gt; getSwiftCache() {
+<b class="fc">&nbsp;        return this.swiftCache;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void initializeCache(SwiftCacheConfig config, ICacheRepository&lt;K, V&gt; cacheRepository) {
+<b class="fc">&nbsp;        DataSource&lt;K, V&gt; dataSource = new DataSource&lt;&gt;(cacheRepository);</b>
+&nbsp;
+<b class="fc">&nbsp;        swiftCache = new SwiftCache&lt;&gt;(config.getMaxSize(), dataSource,</b>
+<b class="fc">&nbsp;                createEvictionStrategy(config.getEvictionStrategy()),</b>
+<b class="fc">&nbsp;                createWritingPolicy(config.getWritePolicy()),</b>
+<b class="fc">&nbsp;                createReadingPolicy(config.getReadPolicy()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates an eviction strategy instance based on the provided strategy name.
+&nbsp;     *
+&nbsp;     * @param strategy The name of the eviction strategy.
+&nbsp;     * @return The corresponding IEvictionStrategy instance.
+&nbsp;     * @throws IllegalArgumentException If the strategy is invalid.
+&nbsp;     */
+&nbsp;    private IEvictionStrategy&lt;K, V&gt; createEvictionStrategy(String strategy) {
+<b class="fc">&nbsp;        if (SwiftCacheConfig.FIFOEvictionStrategy.equals(strategy)) {</b>
+<b class="fc">&nbsp;            return new FIFOEvictionStrategy&lt;&gt;();</b>
+<b class="pc">&nbsp;        } else if (SwiftCacheConfig.LRUEvictionStrategy.equals(strategy)) {</b>
+<b class="fc">&nbsp;            return new LRUEvictionStrategy&lt;&gt;();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid eviction strategy: &quot; + strategy);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a reading policy instance based on the provided policy name.
+&nbsp;     *
+&nbsp;     * @param policy The name of the reading policy.
+&nbsp;     * @return The corresponding IReadingPolicy instance.
+&nbsp;     * @throws IllegalArgumentException If the policy is invalid.
+&nbsp;     */
+&nbsp;    private IReadingPolicy&lt;K, V&gt; createReadingPolicy(String policy) {
+<b class="fc">&nbsp;        if (SwiftCacheConfig.ReadThroughPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new ReadThroughPolicy&lt;&gt;();</b>
+<b class="fc">&nbsp;        } else if (SwiftCacheConfig.RefreshAheadPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new RefreshAheadPolicy&lt;&gt;();</b>
+<b class="pc">&nbsp;        } else if (SwiftCacheConfig.SimpleReadPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new SimpleReadPolicy&lt;&gt;();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid reading policy: &quot; + policy);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a writing policy instance based on the provided policy name.
+&nbsp;     *
+&nbsp;     * @param policy The name of the writing policy.
+&nbsp;     * @return The corresponding IWritingPolicy instance.
+&nbsp;     * @throws IllegalArgumentException If the policy is invalid.
+&nbsp;     */
+&nbsp;    private IWritingPolicy&lt;K, V&gt; createWritingPolicy(String policy) {
+<b class="fc">&nbsp;        if (SwiftCacheConfig.WriteAlwaysPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new WriteAlwaysPolicy&lt;&gt;();</b>
+<b class="fc">&nbsp;        } else if (SwiftCacheConfig.WriteBehindPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new WriteBehindPolicy&lt;&gt;();</b>
+<b class="pc">&nbsp;        } else if (SwiftCacheConfig.WriteIfAbsentPolicy.equals(policy)) {</b>
+<b class="fc">&nbsp;            return new WriteIfAbsentPolicy&lt;&gt;();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid writing policy: &quot; + policy);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-07-31 15:53</div>
+</div>
+</body>
+</html>

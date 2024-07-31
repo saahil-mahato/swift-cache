@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > WriteBehindPolicy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.writingpolicy</a>
+</div>
+
+<h1>Coverage Summary for Class: WriteBehindPolicy (org.swiftcache.writingpolicy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WriteBehindPolicy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.writingpolicy;
+&nbsp;
+&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class implements the Write-Behind writing policy for a cache.
+&nbsp; * In Write-Behind policy, writes are first updated in the cache, and then asynchronously
+&nbsp; * written to the data source in a background thread. This policy improves write performance
+&nbsp; * by reducing the number of synchronous data source interactions, but it introduces a window
+&nbsp; * of data inconsistency between the cache and the data source until the background write completes.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+<b class="fc">&nbsp;public class WriteBehindPolicy&lt;K, V&gt; implements IWritingPolicy&lt;K, V&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger LOGGER = Logger.getLogger(WriteBehindPolicy.class.getName());</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void write(Map&lt;K, V&gt; cacheMap, final K key, final V value, final DataSource&lt;K, V&gt; dataSource) {
+&nbsp;        // Update the cache first
+<b class="fc">&nbsp;        cacheMap.put(key, value);</b>
+&nbsp;
+&nbsp;        // Update the data source asynchronously in a background thread
+<b class="fc">&nbsp;        new Thread(() -&gt; {</b>
+<b class="fc">&nbsp;            dataSource.put(key, value);</b>
+<b class="fc">&nbsp;            LOGGER.info(&quot;Written key: &quot; + key + &quot; to cache, queued for background write to data source&quot;);</b>
+<b class="fc">&nbsp;        }).start();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-07-31 15:53</div>
+</div>
+</body>
+</html>

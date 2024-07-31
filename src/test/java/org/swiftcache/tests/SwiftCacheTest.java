@@ -9,6 +9,10 @@ import org.swiftcache.CacheRepository.ICacheRepository;
 import org.swiftcache.cache.SwiftCache;
 import org.swiftcache.cache.SwiftCacheConfig;
 import org.swiftcache.SwiftCacheManager;
+import org.swiftcache.evictionstrategy.LRUEvictionStrategy;
+import org.swiftcache.readingpolicy.ReadThroughPolicy;
+import org.swiftcache.writingpolicy.WriteAlwaysPolicy;
+
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,6 +84,14 @@ class SwiftCacheTest {
             cache.put("key" + i, "value" + i);
         }
         assertNull(cache.get("key0")); // Should be evicted
+
+        when(mockRepository.get("key0")).thenReturn("value0");
+        assertEquals("value0", cache.get("key0")); // should fetch from data source.
+
+        // test cache config
+        assertEquals(LRUEvictionStrategy.class, cache.getEvictionStrategy().getClass());
+        assertEquals(ReadThroughPolicy.class, cache.getReadingPolicy().getClass());
+        assertEquals(WriteAlwaysPolicy.class, cache.getWritingPolicy().getClass());
 
         // Verify write-always behavior
         verify(mockRepository, times(6)).put(any(), any());

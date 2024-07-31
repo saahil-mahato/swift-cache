@@ -1,0 +1,104 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > IEvictionStrategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.evictionstrategy</a>
+</div>
+
+<h1>Coverage Summary for Class: IEvictionStrategy (org.swiftcache.evictionstrategy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IEvictionStrategy</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.evictionstrategy;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Queue;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface defining the strategy for evicting entries from a cache.
+&nbsp; * This interface provides a way to define different eviction policies
+&nbsp; * for managing the size of the cache.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+&nbsp;public interface IEvictionStrategy&lt;K, V&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Evicts entries from the cache based on the defined strategy.
+&nbsp;     * This method is called when the cache reaches its maximum size and needs
+&nbsp;     * to remove entries to make space for new ones.
+&nbsp;     *
+&nbsp;     * @param cacheMap  The cache map containing key-value pairs.
+&nbsp;     * @param evictionQueue  The queue used to track access order for eviction.
+&nbsp;     */
+&nbsp;    void evict(Map&lt;K, V&gt; cacheMap, Queue&lt;K&gt; evictionQueue);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the eviction queue based on the access of a key.
+&nbsp;     * This method is called whenever a key is accessed in the cache.
+&nbsp;     * The implementation should update the eviction queue to reflect the
+&nbsp;     * most recently used entries.
+&nbsp;     *
+&nbsp;     * @param key           The key that was accessed.
+&nbsp;     * @param evictionQueue The queue used to track access order for eviction.
+&nbsp;     */
+&nbsp;    void updateQueue(K key, Queue&lt;K&gt; evictionQueue);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-07-31 15:53</div>
+</div>
+</body>
+</html>
