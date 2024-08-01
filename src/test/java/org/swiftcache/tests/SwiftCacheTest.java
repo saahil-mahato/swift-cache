@@ -4,8 +4,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.swiftcache.CacheRepository.ICacheRepository;
+import org.swiftcache.cacherepository.ICacheRepository;
 import org.swiftcache.cache.SwiftCache;
 import org.swiftcache.cache.SwiftCacheConfig;
 import org.swiftcache.SwiftCacheManager;
@@ -13,8 +14,9 @@ import org.swiftcache.evictionstrategy.LRUEvictionStrategy;
 import org.swiftcache.readingpolicy.ReadThroughPolicy;
 import org.swiftcache.writingpolicy.WriteAlwaysPolicy;
 
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,8 +27,6 @@ import static org.mockito.Mockito.*;
  * The tests rely on Mockito for mocking the ICacheRepository to isolate the cache's behavior.
  */
 class SwiftCacheTest {
-
-    private static final Logger LOGGER = Logger.getLogger(SwiftCacheTest.class.getName());
 
     @Mock
     private ICacheRepository<Object, Object> mockRepository;
@@ -72,8 +72,8 @@ class SwiftCacheTest {
      */
     @Test
     void testLRUEvictionWithReadThroughAndWriteAlways() {
-        initializeCache(5, SwiftCacheConfig.LRUEvictionStrategy,
-                SwiftCacheConfig.ReadThroughPolicy, SwiftCacheConfig.WriteAlwaysPolicy);
+        initializeCache(5, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
+                SwiftCacheConfig.READ_THROUGH_POLICY, SwiftCacheConfig.WRITE_ALWAYS_POLICY);
 
         // Test put and get
         cache.put("key0", "value0");
@@ -104,8 +104,10 @@ class SwiftCacheTest {
      */
     @Test
     void testFIFOEvictionWithSimpleReadAndWriteBehind() {
-        initializeCache(3, SwiftCacheConfig.FIFOEvictionStrategy,
-                SwiftCacheConfig.SimpleReadPolicy, SwiftCacheConfig.WriteBehindPolicy);
+        ICacheRepository<Object, Object> spyRepository = Mockito.spy(mockRepository);
+
+        initializeCache(3, SwiftCacheConfig.FIFO_EVICTION_STRATEGY,
+                SwiftCacheConfig.SIMPLE_READ_POLICY, SwiftCacheConfig.WRITE_BEHIND_POLICY);
 
         cache.put("key1", "value1");
         cache.put("key2", "value2");
@@ -116,11 +118,7 @@ class SwiftCacheTest {
         assertEquals("value2", cache.get("key2"));
 
         // Verify write-behind behavior (asynchronous, so we need to wait a bit)
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            LOGGER.severe(e.toString());
-        }
+        await().atMost(2, TimeUnit.SECONDS).until(() -> Mockito.mockingDetails(spyRepository).getInvocations().size() == 4);
         verify(mockRepository, times(4)).put(any(), any());
     }
 
@@ -130,19 +128,16 @@ class SwiftCacheTest {
      */
     @Test
     void testLRUEvictionWithRefreshAheadAndWriteIfAbsent() {
-        initializeCache(3, SwiftCacheConfig.LRUEvictionStrategy,
-                SwiftCacheConfig.RefreshAheadPolicy, SwiftCacheConfig.WriteIfAbsentPolicy);
+        ICacheRepository<Object, Object> spyRepository = Mockito.spy(mockRepository);
 
-        when(mockRepository.get("key1")).thenReturn("value1");
+        initializeCache(3, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
+                SwiftCacheConfig.REFRESH_AHEAD_POLICY, SwiftCacheConfig.WRITE_IF_ABSENT_POLICY);
+
         cache.put("key1", "value1");
         cache.get("key1");
 
         // Verify refresh-ahead behavior
-        try {
-            Thread.sleep(100); // Wait for refresh
-        } catch (InterruptedException e) {
-            LOGGER.severe(e.toString());
-        }
+        await().atMost(2, TimeUnit.SECONDS).until(() -> Mockito.mockingDetails(spyRepository).getInvocations().size() == 2);
         verify(mockRepository, times(1)).get("key1");
 
         // Test write-if-absent
@@ -155,8 +150,8 @@ class SwiftCacheTest {
      */
     @Test
     void testCacheSize() {
-        initializeCache(3, SwiftCacheConfig.LRUEvictionStrategy,
-                SwiftCacheConfig.SimpleReadPolicy, SwiftCacheConfig.WriteAlwaysPolicy);
+        initializeCache(3, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
+                SwiftCacheConfig.SIMPLE_READ_POLICY, SwiftCacheConfig.WRITE_ALWAYS_POLICY);
 
         cache.put("key1", "value1");
         cache.put("key2", "value2");
@@ -172,8 +167,8 @@ class SwiftCacheTest {
      */
     @Test
     void testCacheClear() {
-        initializeCache(5, SwiftCacheConfig.FIFOEvictionStrategy,
-                SwiftCacheConfig.SimpleReadPolicy, SwiftCacheConfig.WriteAlwaysPolicy);
+        initializeCache(5, SwiftCacheConfig.FIFO_EVICTION_STRATEGY,
+                SwiftCacheConfig.SIMPLE_READ_POLICY, SwiftCacheConfig.WRITE_ALWAYS_POLICY);
 
         cache.put("key1", "value1");
         cache.put("key2", "value2");
@@ -189,8 +184,8 @@ class SwiftCacheTest {
      */
     @Test
     void testCacheRemove() {
-        initializeCache(5, SwiftCacheConfig.LRUEvictionStrategy,
-                SwiftCacheConfig.ReadThroughPolicy, SwiftCacheConfig.WriteAlwaysPolicy);
+        initializeCache(5, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
+                SwiftCacheConfig.READ_THROUGH_POLICY, SwiftCacheConfig.WRITE_ALWAYS_POLICY);
 
         cache.put("key1", "value1");
         cache.remove("key1");

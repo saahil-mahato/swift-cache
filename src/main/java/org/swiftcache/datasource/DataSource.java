@@ -1,6 +1,6 @@
 package org.swiftcache.datasource;
 
-import org.swiftcache.CacheRepository.ICacheRepository;
+import org.swiftcache.cacherepository.ICacheRepository;
 
 /**
  * A data source abstraction that delegates operations to an underlying cache repository.

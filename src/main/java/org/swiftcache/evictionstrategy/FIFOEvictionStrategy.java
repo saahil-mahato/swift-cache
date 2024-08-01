@@ -2,6 +2,7 @@ package org.swiftcache.evictionstrategy;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(FIFOEvictionStrategy.class.getName());
+    private static final Logger logger = Logger.getLogger(FIFOEvictionStrategy.class.getName());
 
     /**
      * Evicts entries from the cache using the FIFO strategy.
@@ -32,7 +33,7 @@ public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
             cacheMap.remove(evictedKey);
             evictionQueue.remove(evictedKey);
 
-            LOGGER.info(evictedKey + " evicted (FIFO)");
+            logger.log(Level.INFO, "Key {} evicted (FIFO)", evictedKey);
         }
     }
 
@@ -49,7 +50,7 @@ public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
     public void updateQueue(K key, Queue<K> evictionQueue) {
         if (!evictionQueue.contains(key)) {
             evictionQueue.offer(key);
-            LOGGER.info(key + " added to eviction queue (FIFO)");
+            logger.log(Level.INFO, "Key {} added to eviction queue (FIFO)", key);
         }
     }
 }

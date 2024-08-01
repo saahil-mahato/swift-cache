@@ -20,7 +20,7 @@ public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
     private static final Logger LOGGER = Logger.getLogger(WriteBehindPolicy.class.getName());
 
     @Override
-    public void write(Map<K, V> cacheMap, final K key, final V value, final DataSource<K, V> dataSource) {
+    public V write(Map<K, V> cacheMap, final K key, final V value, final DataSource<K, V> dataSource) {
         // Update the cache first
         cacheMap.put(key, value);
 
@@ -29,5 +29,7 @@ public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
             dataSource.put(key, value);
             LOGGER.info("Written key: " + key + " to cache, queued for background write to data source");
         }).start();
+
+        return value;
     }
 }

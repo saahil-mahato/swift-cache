@@ -3,6 +3,7 @@ package org.swiftcache.readingpolicy;
 import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class ReadThroughPolicy<K, V> implements IReadingPolicy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(ReadThroughPolicy.class.getName());
+    private static final Logger logger = Logger.getLogger(ReadThroughPolicy.class.getName());
 
     /**
      * Reads a value from the cache or data source using the Read-Through policy.
@@ -35,10 +36,10 @@ public class ReadThroughPolicy<K, V> implements IReadingPolicy<K, V> {
             value = dataSource.get(key);
             if (value != null) {
                 cacheMap.put(key, value);
-                LOGGER.info("Read miss for key: " + key + ", fetched from data source");
+                logger.log(Level.INFO, "Read miss for key: {}, fetched from data source", key);
             }
         } else {
-            LOGGER.info("Read hit for key: " + key);
+            logger.log(Level.INFO,"Read hit for key: {}", key);
         }
         return value;
     }

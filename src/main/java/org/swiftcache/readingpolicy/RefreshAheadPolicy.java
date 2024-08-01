@@ -3,6 +3,7 @@ package org.swiftcache.readingpolicy;
 import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(RefreshAheadPolicy.class.getName());
+    private static final Logger logger = Logger.getLogger(RefreshAheadPolicy.class.getName());
 
     @Override
     public V read(final Map<K, V> cacheMap, final K key, final DataSource<K, V> dataSource) {
@@ -28,7 +29,7 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
             V freshValue = dataSource.get(key);
             if (freshValue != null) {
                 cacheMap.put(key, freshValue);
-                LOGGER.info("Value for key: " + key + " refreshed in background");
+                logger.log(Level.INFO, "Value for key: {} refreshed in background", key);
             }
         }).start();
 

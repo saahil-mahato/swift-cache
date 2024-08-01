@@ -1,4 +1,4 @@
-package org.swiftcache.CacheRepository;
+package org.swiftcache.cacherepository;
 
 /**
  * Interface defining the basic operations for a cache repository.

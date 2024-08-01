@@ -3,6 +3,7 @@ package org.swiftcache.writingpolicy;
 import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,17 +17,19 @@ import java.util.logging.Logger;
  */
 public class WriteIfAbsentPolicy<K, V> implements IWritingPolicy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteIfAbsentPolicy.class.getName());
+    private static final Logger logger = Logger.getLogger(WriteIfAbsentPolicy.class.getName());
 
     @Override
-    public void write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource) {
+    public V write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource) {
         if (!cacheMap.containsKey(key)) {
             // Key not present in cache, so write to both cache and data source
             cacheMap.put(key, value);
             dataSource.put(key, value);
-            LOGGER.info("Written key: " + key + " to cache and data source (Write-If-Absent)");
+            logger.log(Level.INFO, "Written key: {} to cache and data source (Write-If-Absent)", key);
         } else {
-            LOGGER.info("Key: " + key + " already exists in cache (Write-If-Absent)");
+            logger.log(Level.INFO, "Key: {} already exists in cache (Write-If-Absent)", key);
         }
+
+        return value;
     }
 }

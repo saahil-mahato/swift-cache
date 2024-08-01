@@ -1,6 +1,6 @@
 package org.swiftcache;
 
-import org.swiftcache.CacheRepository.ICacheRepository;
+import org.swiftcache.cacherepository.ICacheRepository;
 import org.swiftcache.cache.SwiftCache;
 import org.swiftcache.cache.SwiftCacheConfig;
 import org.swiftcache.datasource.DataSource;
@@ -57,9 +57,9 @@ public class SwiftCacheManager<K, V> {
      * @throws IllegalArgumentException If the strategy is invalid.
      */
     private IEvictionStrategy<K, V> createEvictionStrategy(String strategy) {
-        if (SwiftCacheConfig.FIFOEvictionStrategy.equals(strategy)) {
+        if (SwiftCacheConfig.FIFO_EVICTION_STRATEGY.equals(strategy)) {
             return new FIFOEvictionStrategy<>();
-        } else if (SwiftCacheConfig.LRUEvictionStrategy.equals(strategy)) {
+        } else if (SwiftCacheConfig.LRU_EVICTION_STRATEGY.equals(strategy)) {
             return new LRUEvictionStrategy<>();
         } else {
             throw new IllegalArgumentException("Invalid eviction strategy: " + strategy);
@@ -74,11 +74,11 @@ public class SwiftCacheManager<K, V> {
      * @throws IllegalArgumentException If the policy is invalid.
      */
     private IReadingPolicy<K, V> createReadingPolicy(String policy) {
-        if (SwiftCacheConfig.ReadThroughPolicy.equals(policy)) {
+        if (SwiftCacheConfig.READ_THROUGH_POLICY.equals(policy)) {
             return new ReadThroughPolicy<>();
-        } else if (SwiftCacheConfig.RefreshAheadPolicy.equals(policy)) {
+        } else if (SwiftCacheConfig.REFRESH_AHEAD_POLICY.equals(policy)) {
             return new RefreshAheadPolicy<>();
-        } else if (SwiftCacheConfig.SimpleReadPolicy.equals(policy)) {
+        } else if (SwiftCacheConfig.SIMPLE_READ_POLICY.equals(policy)) {
             return new SimpleReadPolicy<>();
         } else {
             throw new IllegalArgumentException("Invalid reading policy: " + policy);
@@ -93,11 +93,11 @@ public class SwiftCacheManager<K, V> {
      * @throws IllegalArgumentException If the policy is invalid.
      */
     private IWritingPolicy<K, V> createWritingPolicy(String policy) {
-        if (SwiftCacheConfig.WriteAlwaysPolicy.equals(policy)) {
+        if (SwiftCacheConfig.WRITE_ALWAYS_POLICY.equals(policy)) {
             return new WriteAlwaysPolicy<>();
-        } else if (SwiftCacheConfig.WriteBehindPolicy.equals(policy)) {
+        } else if (SwiftCacheConfig.WRITE_BEHIND_POLICY.equals(policy)) {
             return new WriteBehindPolicy<>();
-        } else if (SwiftCacheConfig.WriteIfAbsentPolicy.equals(policy)) {
+        } else if (SwiftCacheConfig.WRITE_IF_ABSENT_POLICY.equals(policy)) {
             return new WriteIfAbsentPolicy<>();
         } else {
             throw new IllegalArgumentException("Invalid writing policy: " + policy);

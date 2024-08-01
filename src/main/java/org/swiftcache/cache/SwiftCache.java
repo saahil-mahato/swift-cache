@@ -5,12 +5,13 @@ import org.swiftcache.evictionstrategy.IEvictionStrategy;
 import org.swiftcache.readingpolicy.IReadingPolicy;
 import org.swiftcache.writingpolicy.IWritingPolicy;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class SwiftCache<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(SwiftCache.class.getName());
+    private static final Logger logger = Logger.getLogger(SwiftCache.class.getName());
 
     /**
      * The maximum size of the cache in entries.
@@ -78,7 +79,7 @@ public class SwiftCache<K, V> {
                       IWritingPolicy<K, V> writingPolicy,
                       IReadingPolicy<K, V> readingPolicy) {
         this.maxSize = maxSize;
-        this.cacheMap = new LinkedHashMap<>((int) maxSize, 0.75f, true);
+        this.cacheMap = new ConcurrentHashMap<>((int) maxSize, 0.75f, 5);
         this.evictionQueue = new LinkedList<>();
         this.lock = new ReentrantReadWriteLock();
         this.dataSource = dataSource;
@@ -101,7 +102,7 @@ public class SwiftCache<K, V> {
                 this.evictionStrategy.updateQueue(key, this.evictionQueue);
             }
 
-            LOGGER.info("Get " + key);
+            logger.log(Level.INFO, "Key {} fetched", key);
             return value;
         } finally {
             this.lock.readLock().unlock();
@@ -113,20 +114,23 @@ public class SwiftCache<K, V> {
      *
      * @param key   The key for the entry.
      * @param value The value to store.
+     * @return The value that is inserted to the cache.
      */
-    public void put(K key, V value) {
+    public V put(K key, V value) {
         this.lock.writeLock().lock();
+        V newValue;
         try {
             if (this.cacheMap.size() >= this.maxSize) {
                 this.evictionStrategy.evict(this.cacheMap, this.evictionQueue);
             }
-            this.writingPolicy.write(this.cacheMap, key, value, this.dataSource);
+            newValue = this.writingPolicy.write(this.cacheMap, key, value, this.dataSource);
             this.evictionStrategy.updateQueue(key, this.evictionQueue);
 
-            LOGGER.info("Put " + key);
+            logger.log(Level.INFO, "Key {} inserted", key);
         } finally {
             this.lock.writeLock().unlock();
         }
+        return newValue;
     }
 
     /**
@@ -141,7 +145,7 @@ public class SwiftCache<K, V> {
             this.evictionQueue.remove(key);
             this.dataSource.remove(key);
 
-            LOGGER.info("Remove " + key);
+            logger.log(Level.INFO, "Key {} removed", key);
         } finally {
             this.lock.writeLock().unlock();
         }

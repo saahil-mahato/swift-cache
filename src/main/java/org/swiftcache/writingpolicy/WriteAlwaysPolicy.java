@@ -3,6 +3,7 @@ package org.swiftcache.writingpolicy;
 import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,15 +17,17 @@ import java.util.logging.Logger;
  */
 public class WriteAlwaysPolicy<K, V> implements IWritingPolicy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteAlwaysPolicy.class.getName());
+    private static final Logger logger = Logger.getLogger(WriteAlwaysPolicy.class.getName());
 
     @Override
-    public void write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource) {
+    public V write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource) {
         // Update the cache first
         cacheMap.put(key, value);
 
         // Update the data source asynchronously (or synchronously depending on implementation)
         dataSource.put(key, value);
-        LOGGER.info("Written key: " + key + " to both cache and data source");
+        logger.log(Level.INFO, "Written key: {} to both cache and data source", key);
+
+        return value;
     }
 }

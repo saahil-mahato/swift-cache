@@ -25,5 +25,5 @@ public interface IWritingPolicy<K, V> {
      * @param value      The value to associate with the key.
      * @param dataSource The data source to write entries to (may vary depending on policy).
      */
-    void write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource);
+    V write(Map<K, V> cacheMap, K key, V value, DataSource<K, V> dataSource);
 }

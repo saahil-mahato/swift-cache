@@ -2,6 +2,7 @@ package org.swiftcache.evictionstrategy;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class LRUEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(LRUEvictionStrategy.class.getName());
+    private static final Logger logger = Logger.getLogger(LRUEvictionStrategy.class.getName());
 
     /**
      * Evicts entries from the cache using the LRU strategy.
@@ -32,7 +33,7 @@ public class LRUEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
             cacheMap.remove(evictedKey);
             evictionQueue.remove(evictedKey);
 
-            LOGGER.info(evictedKey + " evicted (LRU)");
+            logger.log(Level.INFO, "Key {} evicted (FIFO)", evictedKey);
         }
     }
 
@@ -50,6 +51,6 @@ public class LRUEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
         evictionQueue.remove(key); // Remove from current position
         evictionQueue.offer(key);  // Add to the end (most recently used)
 
-        LOGGER.info(key + " added to end of eviction queue (LRU)");
+        logger.log(Level.INFO, "Key {} added to eviction queue (FIFO)", key);
     }
 }

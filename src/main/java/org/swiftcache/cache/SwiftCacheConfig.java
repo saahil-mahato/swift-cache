@@ -30,42 +30,42 @@ public class SwiftCacheConfig {
     /**
      * Constant representing the LRU eviction strategy.
      */
-    public static final String LRUEvictionStrategy = "LRU";
+    public static final String LRU_EVICTION_STRATEGY = "LRU";
 
     /**
      * Constant representing the FIFO eviction strategy.
      */
-    public static final String FIFOEvictionStrategy = "FIFO";
+    public static final String FIFO_EVICTION_STRATEGY = "FIFO";
 
     /**
      * Constant representing the simple read policy.
      */
-    public static final String SimpleReadPolicy = "SimpleRead";
+    public static final String SIMPLE_READ_POLICY = "SimpleRead";
 
     /**
      * Constant representing the read-through policy.
      */
-    public static final String ReadThroughPolicy = "ReadThrough";
+    public static final String READ_THROUGH_POLICY = "ReadThrough";
 
     /**
      * Constant representing the refresh-ahead policy.
      */
-    public static final String RefreshAheadPolicy = "RefreshAhead";
+    public static final String REFRESH_AHEAD_POLICY = "RefreshAhead";
 
     /**
      * Constant representing the write-always policy.
      */
-    public static final String WriteAlwaysPolicy = "WriteAlways";
+    public static final String WRITE_ALWAYS_POLICY = "WriteAlways";
 
     /**
      * Constant representing the write-behind policy.
      */
-    public static final String WriteBehindPolicy = "WriteBehind";
+    public static final String WRITE_BEHIND_POLICY = "WriteBehind";
 
     /**
      * Constant representing the write-if-absent policy.
      */
-    public static final String WriteIfAbsentPolicy = "WriteIfAbsent";
+    public static final String WRITE_IF_ABSENT_POLICY = "WriteIfAbsent";
 
     /**
      * Constructs a new SwiftCacheConfig instance with the specified parameters.
