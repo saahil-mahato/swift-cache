@@ -31,7 +31,6 @@ public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
 
         if (evictedKey != null) {
             cacheMap.remove(evictedKey);
-            evictionQueue.remove(evictedKey);
 
             logger.log(Level.INFO, "Key {0} evicted (FIFO)", evictedKey);
         }
