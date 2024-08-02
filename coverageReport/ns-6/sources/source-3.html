@@ -1,0 +1,151 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > WriteIfAbsentPolicy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.writingpolicy</a>
+</div>
+
+<h1>Coverage Summary for Class: WriteIfAbsentPolicy (org.swiftcache.writingpolicy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WriteIfAbsentPolicy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.writingpolicy;
+&nbsp;
+&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class implements the Write-If-Absent writing policy for a cache.
+&nbsp; * In Write-If-Absent policy, the write policy is only performed if the key is not already present in the cache.
+&nbsp; * This policy can be useful for scenarios where updates should only happen once for a specific key,
+&nbsp; * or when there&#39;s a need to avoid overwriting existing data in the cache.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+<b class="fc">&nbsp;public class WriteIfAbsentPolicy&lt;K, V&gt; implements IWritingPolicy&lt;K, V&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(WriteIfAbsentPolicy.class.getName());</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public V write(Map&lt;K, V&gt; cacheMap, K key, V value, DataSource&lt;K, V&gt; dataSource) {
+<b class="fc">&nbsp;        if (!cacheMap.containsKey(key)) {</b>
+&nbsp;            // Key not present in cache, so write to both cache and data source
+<b class="fc">&nbsp;            cacheMap.put(key, value);</b>
+<b class="fc">&nbsp;            dataSource.put(key, value);</b>
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Written key: {0} to cache and data source (Write-If-Absent)&quot;, key);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Key: {0} already exists in cache (Write-If-Absent)&quot;, key);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return value;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-02 07:36</div>
+</div>
+</body>
+</html>

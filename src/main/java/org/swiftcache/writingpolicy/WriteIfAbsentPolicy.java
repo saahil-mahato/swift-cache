@@ -25,9 +25,9 @@ public class WriteIfAbsentPolicy<K, V> implements IWritingPolicy<K, V> {
             // Key not present in cache, so write to both cache and data source
             cacheMap.put(key, value);
             dataSource.put(key, value);
-            logger.log(Level.INFO, "Written key: {} to cache and data source (Write-If-Absent)", key);
+            logger.log(Level.INFO, "Written key: {0} to cache and data source (Write-If-Absent)", key);
         } else {
-            logger.log(Level.INFO, "Key: {} already exists in cache (Write-If-Absent)", key);
+            logger.log(Level.INFO, "Key: {0} already exists in cache (Write-If-Absent)", key);
         }
 
         return value;

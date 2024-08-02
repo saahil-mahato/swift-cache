@@ -96,17 +96,18 @@ public class SwiftCache<K, V> {
      */
     public V get(K key) {
         this.lock.readLock().lock();
+        V value;
         try {
-            V value = this.readingPolicy.read(this.cacheMap, key, this.dataSource);
+            value = this.readingPolicy.read(this.cacheMap, key, this.dataSource);
             if (value != null) {
                 this.evictionStrategy.updateQueue(key, this.evictionQueue);
             }
 
-            logger.log(Level.INFO, "Key {} fetched", key);
-            return value;
+            logger.log(Level.INFO, "Key {0} fetched", key);
         } finally {
             this.lock.readLock().unlock();
         }
+        return value;
     }
 
     /**
@@ -126,7 +127,7 @@ public class SwiftCache<K, V> {
             newValue = this.writingPolicy.write(this.cacheMap, key, value, this.dataSource);
             this.evictionStrategy.updateQueue(key, this.evictionQueue);
 
-            logger.log(Level.INFO, "Key {} inserted", key);
+            logger.log(Level.INFO, "Key {0} inserted", key);
         } finally {
             this.lock.writeLock().unlock();
         }
@@ -145,7 +146,7 @@ public class SwiftCache<K, V> {
             this.evictionQueue.remove(key);
             this.dataSource.remove(key);
 
-            logger.log(Level.INFO, "Key {} removed", key);
+            logger.log(Level.INFO, "Key {0} removed", key);
         } finally {
             this.lock.writeLock().unlock();
         }
@@ -158,11 +159,13 @@ public class SwiftCache<K, V> {
      */
     public long size() {
         this.lock.writeLock().lock();
+        int size;
         try {
-            return this.cacheMap.size();
+            size = this.cacheMap.size();
         } finally {
             this.lock.writeLock().unlock();
         }
+        return size;
     }
 
     /**

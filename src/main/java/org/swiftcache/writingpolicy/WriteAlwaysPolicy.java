@@ -26,7 +26,7 @@ public class WriteAlwaysPolicy<K, V> implements IWritingPolicy<K, V> {
 
         // Update the data source asynchronously (or synchronously depending on implementation)
         dataSource.put(key, value);
-        logger.log(Level.INFO, "Written key: {} to both cache and data source", key);
+        logger.log(Level.INFO, "Written key: {0} to both cache and data source", key);
 
         return value;
     }

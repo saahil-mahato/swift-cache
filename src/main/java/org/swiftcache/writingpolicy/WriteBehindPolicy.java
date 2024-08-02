@@ -3,6 +3,7 @@ package org.swiftcache.writingpolicy;
 import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -27,7 +28,7 @@ public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
         // Update the data source asynchronously in a background thread
         new Thread(() -> {
             dataSource.put(key, value);
-            LOGGER.info("Written key: " + key + " to cache, queued for background write to data source");
+            LOGGER.log(Level.INFO, "Written key: {0} to cache, queued for background write to data source", key);
         }).start();
 
         return value;

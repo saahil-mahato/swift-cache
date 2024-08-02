@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LRUEvictionStrategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.evictionstrategy</a>
+</div>
+
+<h1>Coverage Summary for Class: LRUEvictionStrategy (org.swiftcache.evictionstrategy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LRUEvictionStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.evictionstrategy;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Queue;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class implements the Least Recently Used (LRU) eviction strategy for a cache.
+&nbsp; * In LRU eviction, the least recently used entry (the one that hasn&#39;t been accessed
+&nbsp; * for the longest time) is evicted when the cache reaches its maximum size.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+<b class="fc">&nbsp;public class LRUEvictionStrategy&lt;K, V&gt; implements IEvictionStrategy&lt;K, V&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(LRUEvictionStrategy.class.getName());</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Evicts entries from the cache using the LRU strategy.
+&nbsp;     * This method removes the least recently used entry (the first element in the eviction queue)
+&nbsp;     * from the cache map and the queue itself.
+&nbsp;     *
+&nbsp;     * @param cacheMap  The cache map containing key-value pairs.
+&nbsp;     * @param evictionQueue  The queue used to track access order for eviction (assumed to be LRU).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void evict(Map&lt;K, V&gt; cacheMap, Queue&lt;K&gt; evictionQueue) {
+<b class="fc">&nbsp;        K evictedKey = evictionQueue.poll();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (evictedKey != null) {</b>
+<b class="fc">&nbsp;            cacheMap.remove(evictedKey);</b>
+<b class="fc">&nbsp;            evictionQueue.remove(evictedKey);</b>
+&nbsp;
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Key {0} evicted (FIFO)&quot;, evictedKey);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the eviction queue with the accessed key.
+&nbsp;     * This method removes the key from its current position in the queue (indicating it was used)
+&nbsp;     * and then adds it back to the end of the queue (making it the most recently used).
+&nbsp;     * This effectively moves the key to the front of the access order for eviction purposes.
+&nbsp;     *
+&nbsp;     * @param key           The key that was accessed.
+&nbsp;     * @param evictionQueue The queue used to track access order for eviction (assumed to be LRU).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void updateQueue(K key, Queue&lt;K&gt; evictionQueue) {
+<b class="fc">&nbsp;        evictionQueue.remove(key); // Remove from current position</b>
+<b class="fc">&nbsp;        evictionQueue.offer(key);  // Add to the end (most recently used)</b>
+&nbsp;
+<b class="fc">&nbsp;        logger.log(Level.INFO, &quot;Key {0} added to eviction queue (FIFO)&quot;, key);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-02 07:36</div>
+</div>
+</body>
+</html>

@@ -29,7 +29,7 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
             V freshValue = dataSource.get(key);
             if (freshValue != null) {
                 cacheMap.put(key, freshValue);
-                logger.log(Level.INFO, "Value for key: {} refreshed in background", key);
+                logger.log(Level.INFO, "Value for key: {0} refreshed in background", key);
             }
         }).start();
 

@@ -1,0 +1,326 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SwiftCache</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.cache</a>
+</div>
+
+<h1>Coverage Summary for Class: SwiftCache (org.swiftcache.cache)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SwiftCache</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (47/47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.cache;
+&nbsp;
+&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;import org.swiftcache.evictionstrategy.IEvictionStrategy;
+&nbsp;import org.swiftcache.readingpolicy.IReadingPolicy;
+&nbsp;import org.swiftcache.writingpolicy.IWritingPolicy;
+&nbsp;
+&nbsp;import java.util.LinkedList;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Queue;
+&nbsp;import java.util.concurrent.ConcurrentHashMap;
+&nbsp;import java.util.concurrent.locks.ReadWriteLock;
+&nbsp;import java.util.concurrent.locks.ReentrantReadWriteLock;
+&nbsp;import java.util.logging.Level;
+&nbsp;import java.util.logging.Logger;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class implements a generic cache with configurable eviction strategy, reading policy, and writing policy.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The key type for the cache entries.
+&nbsp; * @param &lt;V&gt; The value type for the cache entries.
+&nbsp; */
+&nbsp;public class SwiftCache&lt;K, V&gt; {
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(SwiftCache.class.getName());</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The maximum size of the cache in entries.
+&nbsp;     */
+&nbsp;    private final long maxSize;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The internal map storing the cache entries.
+&nbsp;     */
+&nbsp;    private final Map&lt;K, V&gt; cacheMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The queue used by the eviction strategy to track access order.
+&nbsp;     */
+&nbsp;    private final Queue&lt;K&gt; evictionQueue;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The read-write lock for thread safety.
+&nbsp;     */
+&nbsp;    private final ReadWriteLock lock;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The data source used to fetch and store entries when needed.
+&nbsp;     */
+&nbsp;    private final DataSource&lt;K, V&gt; dataSource;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The strategy used to determine which entries to evict when the cache reaches its maximum size.
+&nbsp;     */
+&nbsp;    private final IEvictionStrategy&lt;K, V&gt; evictionStrategy;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The policy used to write entries to the cache and potentially the data source.
+&nbsp;     */
+&nbsp;    private final IWritingPolicy&lt;K, V&gt; writingPolicy;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The policy used to read entries from the cache and potentially the data source.
+&nbsp;     */
+&nbsp;    private final IReadingPolicy&lt;K, V&gt; readingPolicy;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new SwiftCache instance with the specified configuration.
+&nbsp;     *
+&nbsp;     * @param maxSize        The maximum size of the cache in entries.
+&nbsp;     * @param dataSource     The data source used to fetch and store entries.
+&nbsp;     * @param evictionStrategy The strategy used to determine which entries to evict.
+&nbsp;     * @param writingPolicy  The policy used to write entries to the cache and potentially the data source.
+&nbsp;     * @param readingPolicy  The policy used to read entries from the cache and potentially the data source.
+&nbsp;     */
+&nbsp;    public SwiftCache(long maxSize,
+&nbsp;                      DataSource&lt;K, V&gt; dataSource,
+&nbsp;                      IEvictionStrategy&lt;K, V&gt; evictionStrategy,
+&nbsp;                      IWritingPolicy&lt;K, V&gt; writingPolicy,
+<b class="fc">&nbsp;                      IReadingPolicy&lt;K, V&gt; readingPolicy) {</b>
+<b class="fc">&nbsp;        this.maxSize = maxSize;</b>
+<b class="fc">&nbsp;        this.cacheMap = new ConcurrentHashMap&lt;&gt;((int) maxSize, 0.75f, 5);</b>
+<b class="fc">&nbsp;        this.evictionQueue = new LinkedList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.lock = new ReentrantReadWriteLock();</b>
+<b class="fc">&nbsp;        this.dataSource = dataSource;</b>
+<b class="fc">&nbsp;        this.evictionStrategy = evictionStrategy;</b>
+<b class="fc">&nbsp;        this.writingPolicy = writingPolicy;</b>
+<b class="fc">&nbsp;        this.readingPolicy = readingPolicy;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a value from the cache for the given key.
+&nbsp;     *
+&nbsp;     * @param key The key of the entry to retrieve.
+&nbsp;     * @return The value associated with the key, or null if the key is not found in the cache.
+&nbsp;     */
+&nbsp;    public V get(K key) {
+<b class="fc">&nbsp;        this.lock.readLock().lock();</b>
+&nbsp;        V value;
+&nbsp;        try {
+<b class="fc">&nbsp;            value = this.readingPolicy.read(this.cacheMap, key, this.dataSource);</b>
+<b class="fc">&nbsp;            if (value != null) {</b>
+<b class="fc">&nbsp;                this.evictionStrategy.updateQueue(key, this.evictionQueue);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Key {0} fetched&quot;, key);</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.lock.readLock().unlock();</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return value;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Stores a key-value pair in the cache.
+&nbsp;     *
+&nbsp;     * @param key   The key for the entry.
+&nbsp;     * @param value The value to store.
+&nbsp;     * @return The value that is inserted to the cache.
+&nbsp;     */
+&nbsp;    public V put(K key, V value) {
+<b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
+&nbsp;        V newValue;
+&nbsp;        try {
+<b class="fc">&nbsp;            if (this.cacheMap.size() &gt;= this.maxSize) {</b>
+<b class="fc">&nbsp;                this.evictionStrategy.evict(this.cacheMap, this.evictionQueue);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            newValue = this.writingPolicy.write(this.cacheMap, key, value, this.dataSource);</b>
+<b class="fc">&nbsp;            this.evictionStrategy.updateQueue(key, this.evictionQueue);</b>
+&nbsp;
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Key {0} inserted&quot;, key);</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.lock.writeLock().unlock();</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return newValue;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes an entry from the cache for the given key.
+&nbsp;     *
+&nbsp;     * @param key The key of the entry to remove.
+&nbsp;     */
+&nbsp;    public void remove(K key) {
+<b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            this.cacheMap.remove(key);</b>
+<b class="fc">&nbsp;            this.evictionQueue.remove(key);</b>
+<b class="fc">&nbsp;            this.dataSource.remove(key);</b>
+&nbsp;
+<b class="fc">&nbsp;            logger.log(Level.INFO, &quot;Key {0} removed&quot;, key);</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.lock.writeLock().unlock();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the current size of the cache in entries.
+&nbsp;     *
+&nbsp;     * @return The number of entries currently in the cache.
+&nbsp;     */
+&nbsp;    public long size() {
+<b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
+&nbsp;        int size;
+&nbsp;        try {
+<b class="fc">&nbsp;            size = this.cacheMap.size();</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.lock.writeLock().unlock();</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return size;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears all entries from the cache.
+&nbsp;     */
+&nbsp;    public void clear() {
+<b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            this.cacheMap.clear();</b>
+<b class="fc">&nbsp;            this.evictionQueue.clear();</b>
+&nbsp;        } finally {
+<b class="fc">&nbsp;            this.lock.writeLock().unlock();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the configured eviction strategy.
+&nbsp;     *
+&nbsp;     * @return The IEvictionStrategy&lt;K, V&gt; instance used by the cache.
+&nbsp;     */
+&nbsp;    public IEvictionStrategy&lt;K, V&gt; getEvictionStrategy() {
+<b class="fc">&nbsp;        return this.evictionStrategy;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the configured reading policy.
+&nbsp;     *
+&nbsp;     * @return The IReadingPolicy&lt;K, V&gt; instance used by the cache.
+&nbsp;     */
+&nbsp;    public IReadingPolicy&lt;K, V&gt; getReadingPolicy() {
+<b class="fc">&nbsp;        return this.readingPolicy;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the configured writing policy.
+&nbsp;     *
+&nbsp;     * @return The IWritingPolicy&lt;K, V&gt; instance used by the cache.
+&nbsp;     */
+&nbsp;    public IWritingPolicy&lt;K, V&gt; getWritingPolicy() {
+<b class="fc">&nbsp;        return this.writingPolicy;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-02 07:36</div>
+</div>
+</body>
+</html>

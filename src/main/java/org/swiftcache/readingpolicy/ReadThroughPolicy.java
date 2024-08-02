@@ -36,10 +36,10 @@ public class ReadThroughPolicy<K, V> implements IReadingPolicy<K, V> {
             value = dataSource.get(key);
             if (value != null) {
                 cacheMap.put(key, value);
-                logger.log(Level.INFO, "Read miss for key: {}, fetched from data source", key);
+                logger.log(Level.INFO, "Read miss for key: {0}, fetched from data source", key);
             }
         } else {
-            logger.log(Level.INFO,"Read hit for key: {}", key);
+            logger.log(Level.INFO,"Read hit for key: {0}", key);
         }
         return value;
     }

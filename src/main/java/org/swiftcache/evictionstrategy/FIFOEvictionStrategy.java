@@ -33,7 +33,7 @@ public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
             cacheMap.remove(evictedKey);
             evictionQueue.remove(evictedKey);
 
-            logger.log(Level.INFO, "Key {} evicted (FIFO)", evictedKey);
+            logger.log(Level.INFO, "Key {0} evicted (FIFO)", evictedKey);
         }
     }
 
@@ -50,7 +50,7 @@ public class FIFOEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
     public void updateQueue(K key, Queue<K> evictionQueue) {
         if (!evictionQueue.contains(key)) {
             evictionQueue.offer(key);
-            logger.log(Level.INFO, "Key {} added to eviction queue (FIFO)", key);
+            logger.log(Level.INFO, "Key {0} added to eviction queue (FIFO)", key);
         }
     }
 }

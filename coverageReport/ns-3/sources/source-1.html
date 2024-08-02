@@ -1,0 +1,164 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DataSource</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.datasource</a>
+</div>
+
+<h1>Coverage Summary for Class: DataSource (org.swiftcache.datasource)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DataSource</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.datasource;
+&nbsp;
+&nbsp;import org.swiftcache.cacherepository.ICacheRepository;
+&nbsp;
+&nbsp;/**
+&nbsp; * A data source abstraction that delegates operations to an underlying cache repository.
+&nbsp; * This class provides a simple wrapper around an {@link ICacheRepository} to abstract away the specific
+&nbsp; * cache implementation details.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+&nbsp;public class DataSource&lt;K, V&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The underlying cache repository.
+&nbsp;     */
+&nbsp;    private final ICacheRepository&lt;K, V&gt; repository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new DataSource instance with the specified cache repository.
+&nbsp;     *
+&nbsp;     * @param repository The cache repository to delegate operations to.
+&nbsp;     */
+<b class="fc">&nbsp;    public DataSource(ICacheRepository&lt;K, V&gt; repository) {</b>
+<b class="fc">&nbsp;        this.repository = repository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a value from the data source based on the given key.
+&nbsp;     * This method delegates the operation to the underlying cache repository.
+&nbsp;     *
+&nbsp;     * @param key The key to retrieve the value for.
+&nbsp;     * @return The value associated with the key, or null if not found.
+&nbsp;     */
+&nbsp;    public V get(K key) {
+<b class="fc">&nbsp;        return this.repository.get(key);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Stores a key-value pair in the data source.
+&nbsp;     * This method delegates the operation to the underlying cache repository.
+&nbsp;     *
+&nbsp;     * @param key   The key to associate with the value.
+&nbsp;     * @param value The value to store in the data source.
+&nbsp;     */
+&nbsp;    public void put(K key, V value) {
+<b class="fc">&nbsp;        this.repository.put(key, value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a key-value pair from the data source.
+&nbsp;     * This method delegates the operation to the underlying cache repository.
+&nbsp;     *
+&nbsp;     * @param key The key of the entry to remove.
+&nbsp;     */
+&nbsp;    public void remove(K key) {
+<b class="fc">&nbsp;        this.repository.remove(key);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-02 07:36</div>
+</div>
+</body>
+</html>

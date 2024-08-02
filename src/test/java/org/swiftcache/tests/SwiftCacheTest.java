@@ -10,10 +10,19 @@ import org.swiftcache.cacherepository.ICacheRepository;
 import org.swiftcache.cache.SwiftCache;
 import org.swiftcache.cache.SwiftCacheConfig;
 import org.swiftcache.SwiftCacheManager;
+import org.swiftcache.datasource.DataSource;
+import org.swiftcache.evictionstrategy.FIFOEvictionStrategy;
+import org.swiftcache.evictionstrategy.IEvictionStrategy;
 import org.swiftcache.evictionstrategy.LRUEvictionStrategy;
+import org.swiftcache.readingpolicy.IReadingPolicy;
 import org.swiftcache.readingpolicy.ReadThroughPolicy;
+import org.swiftcache.readingpolicy.RefreshAheadPolicy;
 import org.swiftcache.writingpolicy.WriteAlwaysPolicy;
 
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -29,9 +38,9 @@ import static org.mockito.Mockito.*;
 class SwiftCacheTest {
 
     @Mock
-    private ICacheRepository<Object, Object> mockRepository;
+    private ICacheRepository<String, String> mockRepository;
 
-    private SwiftCache<Object, Object> cache;
+    private SwiftCache<String, String> cache;
 
     /**
      * Initializes the test environment by creating a mock repository.
@@ -47,8 +56,12 @@ class SwiftCacheTest {
     @AfterEach
     @SuppressWarnings("unchecked")
     void tearDown() {
-        cache.clear();
-        clearInvocations(mockRepository);
+        try {
+            cache.clear();
+            clearInvocations(mockRepository);
+        } catch (NullPointerException e) {
+            // Do nothing
+        }
     }
 
     /**
@@ -61,7 +74,7 @@ class SwiftCacheTest {
      */
     private void initializeCache(int capacity, String evictionStrategy, String readPolicy, String writePolicy) {
         SwiftCacheConfig config = new SwiftCacheConfig(capacity, evictionStrategy, readPolicy, writePolicy);
-        SwiftCacheManager<Object, Object> cacheManager = new SwiftCacheManager<>(config, mockRepository);
+        SwiftCacheManager<String, String> cacheManager = new SwiftCacheManager<>(config, mockRepository);
         cache = cacheManager.getSwiftCache();
     }
 
@@ -98,13 +111,41 @@ class SwiftCacheTest {
     }
 
     /**
+     * Tests the LRU eviction strategy when the eviction queue is empty.
+     * Verifies that no keys are evicted, resulting in a queue size of zero.
+     */
+    @Test
+    void testLRUEmptyEvict() {
+        IEvictionStrategy<String, String> evictionStrategy = new LRUEvictionStrategy<>();
+        Map<String, String> tempCache = new ConcurrentHashMap<>();
+        tempCache.put("key0", "value0");
+        Queue<String> queue = new LinkedList<>();
+        evictionStrategy.evict(tempCache, queue);
+        assertEquals(0, queue.size());
+    }
+
+    /**
+     * Tests the FIFO eviction strategy when the eviction queue is empty.
+     * Verifies that no keys are evicted, resulting in a queue size of zero.
+     */
+    @Test
+    void testFIFOEmptyEvict() {
+        IEvictionStrategy<String, String> evictionStrategy = new FIFOEvictionStrategy<>();
+        Map<String, String> tempCache = new ConcurrentHashMap<>();
+        tempCache.put("key0", "value0");
+        Queue<String> queue = new LinkedList<>();
+        evictionStrategy.evict(tempCache, queue);
+        assertEquals(0, queue.size());
+    }
+
+    /**
      * Tests FIFO eviction with Simple Read and Write-Behind policies.
      * Verifies that the first-in-first-out eviction strategy is applied correctly.
      * Also checks the asynchronous write-behind behavior.
      */
     @Test
     void testFIFOEvictionWithSimpleReadAndWriteBehind() {
-        ICacheRepository<Object, Object> spyRepository = Mockito.spy(mockRepository);
+        ICacheRepository<String, String> spyRepository = Mockito.spy(mockRepository);
 
         initializeCache(3, SwiftCacheConfig.FIFO_EVICTION_STRATEGY,
                 SwiftCacheConfig.SIMPLE_READ_POLICY, SwiftCacheConfig.WRITE_BEHIND_POLICY);
@@ -128,7 +169,7 @@ class SwiftCacheTest {
      */
     @Test
     void testLRUEvictionWithRefreshAheadAndWriteIfAbsent() {
-        ICacheRepository<Object, Object> spyRepository = Mockito.spy(mockRepository);
+        ICacheRepository<String, String> spyRepository = Mockito.spy(mockRepository);
 
         initializeCache(3, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
                 SwiftCacheConfig.REFRESH_AHEAD_POLICY, SwiftCacheConfig.WRITE_IF_ABSENT_POLICY);
@@ -143,6 +184,28 @@ class SwiftCacheTest {
         // Test write-if-absent
         cache.put("key1", "newValue1");
         verify(mockRepository, times(1)).put("key1", "value1"); // Should not write again
+    }
+
+    /**
+     * Tests the Refresh-Ahead policy with new data.
+     * Verifies that the cache is updated with the new value from the data source.
+     */
+    @Test
+    void testRefreshAheadWithNewData() {
+        ICacheRepository<String, String> spyRepository = Mockito.spy(mockRepository);
+        when(mockRepository.get("key0")).thenReturn("value0New");
+
+        IReadingPolicy<String, String> policy = new RefreshAheadPolicy<>();
+        Map<String, String> tempMap = new ConcurrentHashMap<>();
+        tempMap.put("key0", "value0");
+        policy.read(tempMap, "key0", new DataSource<>(mockRepository));
+
+        // Verify refresh-ahead behavior
+        await().atMost(2, TimeUnit.SECONDS).until(
+                () -> Mockito.mockingDetails(spyRepository).getInvocations().size() == 1
+        );
+
+        assertEquals("value0New", tempMap.get("key0"));
     }
 
     /**
@@ -192,5 +255,24 @@ class SwiftCacheTest {
 
         assertNull(cache.get("key1"));
         verify(mockRepository).remove("key1");
+    }
+
+    /**
+     * Tests the initialization of the cache with invalid configurations.
+     * Verifies that an IllegalArgumentException is thrown for each invalid parameter.
+     */
+    @Test
+    void testInvalidCacheConfig() {
+        assertThrows(IllegalArgumentException.class, () -> initializeCache(5,
+                "ILLEGAL", SwiftCacheConfig.READ_THROUGH_POLICY,
+                SwiftCacheConfig.WRITE_ALWAYS_POLICY));
+
+        assertThrows(IllegalArgumentException.class, () -> initializeCache(5,
+                SwiftCacheConfig.LRU_EVICTION_STRATEGY, "ILLEGAL",
+                SwiftCacheConfig.WRITE_ALWAYS_POLICY));
+
+        assertThrows(IllegalArgumentException.class, () -> initializeCache(5,
+                SwiftCacheConfig.LRU_EVICTION_STRATEGY, SwiftCacheConfig.READ_THROUGH_POLICY,
+                "ILLEGAL"));
     }
 }

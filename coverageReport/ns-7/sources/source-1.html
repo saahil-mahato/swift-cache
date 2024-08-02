@@ -1,0 +1,136 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ICacheRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.swiftcache.cacherepository</a>
+</div>
+
+<h1>Coverage Summary for Class: ICacheRepository (org.swiftcache.cacherepository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$auxiliary$gugFC1eY</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$auxiliary$ZJxjVZAg</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$18kD1vMh</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$22DFI4T9</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$3srpbLDH</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$bh440yRu</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$fXIaH28x</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$OhJuSZJo</td>
+  </tr>
+  <tr>
+    <td class="name">ICacheRepository$MockitoMock$46310158$MockitoMock$1364182288$auxiliary$pmhm37mu</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.cacherepository;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface defining the basic operations for a cache repository.
+&nbsp; * This interface provides a common contract for cache implementations,
+&nbsp; * allowing for different cache strategies to be interchangeable.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
+&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
+&nbsp; */
+&nbsp;public interface ICacheRepository&lt;K, V&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves a value from the cache based on the given key.
+&nbsp;     *
+&nbsp;     * @param key The key to retrieve the value for.
+&nbsp;     * @return The value associated with the key, or null if not found.
+&nbsp;     */
+&nbsp;    V get(K key);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Stores a key-value pair in the cache.
+&nbsp;     *
+&nbsp;     * @param key   The key to associate with the value.
+&nbsp;     * @param value The value to store in the cache.
+&nbsp;     */
+&nbsp;    void put(K key, V value);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a key-value pair from the cache.
+&nbsp;     *
+&nbsp;     * @param key The key of the entry to remove.
+&nbsp;     */
+&nbsp;    void remove(K key);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-02 07:36</div>
+</div>
+</body>
+</html>
