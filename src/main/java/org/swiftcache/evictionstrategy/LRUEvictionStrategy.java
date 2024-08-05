@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * This class implements the Least Recently Used (LRU) eviction strategy for a cache.
  * In LRU eviction, the least recently used entry (the one that hasn't been accessed
@@ -32,7 +33,7 @@ public class LRUEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
         if (evictedKey != null) {
             cacheMap.remove(evictedKey);
 
-            logger.log(Level.INFO, "Key {0} evicted (FIFO)", evictedKey);
+            logger.log(Level.INFO, "Key {0} evicted (LRU)", evictedKey);
         }
     }
 
@@ -50,6 +51,6 @@ public class LRUEvictionStrategy<K, V> implements IEvictionStrategy<K, V> {
         evictionQueue.remove(key); // Remove from current position
         evictionQueue.offer(key);  // Add to the end (most recently used)
 
-        logger.log(Level.INFO, "Key {0} added to eviction queue (FIFO)", key);
+        logger.log(Level.INFO, "Key {0} added to eviction queue (LRU)", key);
     }
 }

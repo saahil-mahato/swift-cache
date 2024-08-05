@@ -1,6 +1,8 @@
 package org.swiftcache.datasource;
 
 import org.swiftcache.cacherepository.ICacheRepository;
+import org.swiftcache.utils.TriFunction;
+
 
 /**
  * A data source abstraction that delegates operations to an underlying cache repository.
@@ -56,5 +58,17 @@ public class DataSource<K, V> {
      */
     public void remove(K key) {
         this.repository.remove(key);
+    }
+
+    /**
+     * Executes a custom operation with the cache.
+     *
+     * @param key       The key to associate with the value.
+     * @param value     The value to store in the cache.
+     * @param operation A function that defines the operation to be executed.
+     * @return The result of the operation.
+     */
+    public <R> R executeWithCache(K key, V value, TriFunction<K, V, ICacheRepository<K, V>, R> operation) {
+        return this.repository.executeWithCache(key, value, operation);
     }
 }

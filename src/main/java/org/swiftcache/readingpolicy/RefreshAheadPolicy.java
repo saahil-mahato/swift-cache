@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * This class implements the Refresh-Ahead reading policy for a cache.
  * In Refresh-Ahead policy, when a key is found in the cache, a background thread
@@ -27,10 +28,8 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
         // Start a background thread to refresh the value asynchronously
         new Thread(() -> {
             V freshValue = dataSource.get(key);
-            if (freshValue != null) {
-                cacheMap.put(key, freshValue);
-                logger.log(Level.INFO, "Value for key: {0} refreshed in background", key);
-            }
+            cacheMap.put(key, freshValue);
+            logger.log(Level.INFO, "Value for key: {0} refreshed in background", key);
         }).start();
 
         return value;

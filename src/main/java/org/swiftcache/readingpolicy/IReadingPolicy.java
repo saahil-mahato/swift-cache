@@ -4,6 +4,7 @@ import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
 
+
 /**
  * Interface defining the strategy for reading entries from a cache.
  * This interface allows for different policies to be implemented for reading data,

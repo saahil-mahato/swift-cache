@@ -1,5 +1,8 @@
 package org.swiftcache.cacherepository;
 
+import org.swiftcache.utils.TriFunction;
+
+
 /**
  * Interface defining the basic operations for a cache repository.
  * This interface provides a common contract for cache implementations,
@@ -32,4 +35,14 @@ public interface ICacheRepository<K, V> {
      * @param key The key of the entry to remove.
      */
     void remove(K key);
+
+    /**
+     * Executes a custom operation with the cache.
+     *
+     * @param key       The key to associate with the value.
+     * @param value     The value to store in the cache.
+     * @param operation A function that defines the operation to be executed.
+     * @return The result of the operation.
+     */
+    <R> R executeWithCache(K key, V value, TriFunction<K, V, ICacheRepository<K, V>, R> operation);
 }
