@@ -4,6 +4,7 @@ import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
 
+
 /**
  * This class implements the Simple Read reading policy for a cache.
  * In Simple Read policy, the cache is the only source for data. The data source is

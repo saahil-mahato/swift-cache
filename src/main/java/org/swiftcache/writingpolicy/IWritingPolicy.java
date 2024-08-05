@@ -4,6 +4,7 @@ import org.swiftcache.datasource.DataSource;
 
 import java.util.Map;
 
+
 /**
  * Interface defining the strategy for writing entries to a cache.
  * This interface allows for different policies to be implemented for writing data,

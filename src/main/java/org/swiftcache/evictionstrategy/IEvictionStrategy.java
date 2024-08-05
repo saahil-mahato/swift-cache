@@ -3,6 +3,7 @@ package org.swiftcache.evictionstrategy;
 import java.util.Map;
 import java.util.Queue;
 
+
 /**
  * Interface defining the strategy for evicting entries from a cache.
  * This interface provides a way to define different eviction policies

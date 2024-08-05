@@ -1,5 +1,6 @@
 package org.swiftcache.cache;
 
+
 /**
  * Configuration class for SwiftCache.
  * This class encapsulates the configuration parameters for a SwiftCache instance,
