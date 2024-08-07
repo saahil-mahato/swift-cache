@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > IReadingPolicy</title>
+  <title>Coverage Report > IWritingPolicy</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,17 +19,17 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.swiftcache.readingpolicy</a>
+    <a href="../index.html">org.swiftcache.writingpolicy</a>
 </div>
 
-<h1>Coverage Summary for Class: IReadingPolicy (org.swiftcache.readingpolicy)</h1>
+<h1>Coverage Summary for Class: IWritingPolicy (org.swiftcache.writingpolicy)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">IReadingPolicy</td>
+  <td class="name">IWritingPolicy</td>
 </tr>
 
 </table>
@@ -39,34 +39,16 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.readingpolicy;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.writingpolicy;
 &nbsp;
-&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;import org.swiftcache.cacherepository.ICacheRepository;
 &nbsp;
 &nbsp;import java.util.Map;
 &nbsp;
-&nbsp;/**
-&nbsp; * Interface defining the strategy for reading entries from a cache.
-&nbsp; * This interface allows for different policies to be implemented for reading data,
-&nbsp; * providing flexibility in how the cache interacts with the underlying data source.
-&nbsp; *
-&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
-&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
-&nbsp; */
-&nbsp;public interface IReadingPolicy&lt;K, V&gt; {
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Reads an entry from the cache or data source based on the policy.
-&nbsp;     * This method defines how the reading policy retrieves a value for a given key.
-&nbsp;     * The implementation might check the cache first, and if not found, fetch it from
-&nbsp;     * the data source and potentially store it in the cache.
-&nbsp;     *
-&nbsp;     * @param cacheMap  The cache map containing key-value pairs.
-&nbsp;     * @param key        The key of the entry to read.
-&nbsp;     * @param dataSource The data source to fetch entries from if not found in the cache.
-&nbsp;     * @return The value associated with the key, or null if not found.
-&nbsp;     */
-&nbsp;    V read(Map&lt;K, V&gt; cacheMap, K key, DataSource&lt;K, V&gt; dataSource);
+&nbsp;public interface IWritingPolicy&lt;K, V&gt; {
+&nbsp;
+&nbsp;    V write(Map&lt;K, V&gt; cacheMap, K key, V value, ICacheRepository&lt;K, V&gt; repository);
 &nbsp;}
 </code>
 </pre>
@@ -91,7 +73,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-02 13:59</div>
+    <div style="float:right;">generated on 2024-08-07 12:19</div>
 </div>
 </body>
 </html>

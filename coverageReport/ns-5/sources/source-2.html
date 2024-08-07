@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > RefreshAheadPolicy</title>
+  <title>Coverage Report > WriteBehindPolicy</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.swiftcache.readingpolicy</a>
+    <a href="../index.html">org.swiftcache.writingpolicy</a>
 </div>
 
-<h1>Coverage Summary for Class: RefreshAheadPolicy (org.swiftcache.readingpolicy)</h1>
+<h1>Coverage Summary for Class: WriteBehindPolicy (org.swiftcache.writingpolicy)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -37,15 +37,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
-  Branch, %
-</th>
-<th class="coverageStat 
-">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">RefreshAheadPolicy</td>
+  <td class="name">WriteBehindPolicy</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -67,15 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (2/2)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (10/10)
+    (8/8)
   </span>
 </td>
 </tr>
@@ -87,39 +75,28 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.readingpolicy;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.writingpolicy;
 &nbsp;
-&nbsp;import org.swiftcache.datasource.DataSource;
+&nbsp;import org.swiftcache.cacherepository.ICacheRepository;
 &nbsp;
 &nbsp;import java.util.Map;
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;/**
-&nbsp; * This class implements the Refresh-Ahead reading policy for a cache.
-&nbsp; * In Refresh-Ahead policy, when a key is found in the cache, a background thread
-&nbsp; * is launched to fetch a fresh value from the data source. The current cached value
-&nbsp; * is still returned. This ensures that the data in the cache is eventually consistent
-&nbsp; * with the data source, even if it might be slightly stale at times.
-&nbsp; *
-&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
-&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
-&nbsp; */
-<b class="fc">&nbsp;public class RefreshAheadPolicy&lt;K, V&gt; implements IReadingPolicy&lt;K, V&gt; {</b>
 &nbsp;
-<b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(RefreshAheadPolicy.class.getName());</b>
+<b class="fc">&nbsp;public class WriteBehindPolicy&lt;K, V&gt; implements IWritingPolicy&lt;K, V&gt; {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger LOGGER = Logger.getLogger(WriteBehindPolicy.class.getName());</b>
 &nbsp;
 &nbsp;    @Override
-&nbsp;    public V read(final Map&lt;K, V&gt; cacheMap, final K key, final DataSource&lt;K, V&gt; dataSource) {
-<b class="fc">&nbsp;        V value = cacheMap.get(key);</b>
+&nbsp;    public V write(Map&lt;K, V&gt; cacheMap, final K key, final V value, final ICacheRepository&lt;K, V&gt; repository) {
+&nbsp;        // Update the cache first
+<b class="fc">&nbsp;        cacheMap.put(key, value);</b>
 &nbsp;
-&nbsp;        // Start a background thread to refresh the value asynchronously
+&nbsp;        // Update the data source asynchronously in a background thread
 <b class="fc">&nbsp;        new Thread(() -&gt; {</b>
-<b class="fc">&nbsp;            V freshValue = dataSource.get(key);</b>
-<b class="fc">&nbsp;            if (freshValue != null) {</b>
-<b class="fc">&nbsp;                cacheMap.put(key, freshValue);</b>
-<b class="fc">&nbsp;                logger.log(Level.INFO, &quot;Value for key: {0} refreshed in background&quot;, key);</b>
-&nbsp;            }
+<b class="fc">&nbsp;            repository.put(key, value);</b>
+<b class="fc">&nbsp;            LOGGER.log(Level.INFO, &quot;Written key: {0} to cache, queued for background write to data source&quot;, key);</b>
 <b class="fc">&nbsp;        }).start();</b>
 &nbsp;
 <b class="fc">&nbsp;        return value;</b>
@@ -148,7 +125,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-02 13:59</div>
+    <div style="float:right;">generated on 2024-08-07 12:19</div>
 </div>
 </body>
 </html>
