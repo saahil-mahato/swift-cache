@@ -15,7 +15,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * A custom cache implementation that provides caching functionality with
+ * eviction strategies, reading policies, and writing policies.
+ *
+ * @param <K> the type of keys maintained by this cache
+ * @param <V> the type of cached values
+ */
 public class SwiftCache<K, V> {
 
     private static final Logger logger = Logger.getLogger(SwiftCache.class.getName());
@@ -34,6 +40,14 @@ public class SwiftCache<K, V> {
 
     private final IReadingPolicy<K, V> readingPolicy;
 
+    /**
+     * Constructs a new SwiftCache with the specified maximum size and policies.
+     *
+     * @param maxSize the maximum number of entries the cache can hold
+     * @param evictionStrategy the strategy to use for evicting entries
+     * @param writingPolicy the policy to use for writing entries
+     * @param readingPolicy the policy to use for reading entries
+     */
     public SwiftCache(long maxSize,
                       IEvictionStrategy<K, V> evictionStrategy,
                       IWritingPolicy<K, V> writingPolicy,
@@ -47,6 +61,13 @@ public class SwiftCache<K, V> {
         this.readingPolicy = readingPolicy;
     }
 
+    /**
+     * Retrieves an entry from the cache, using the specified repository to fetch the value if not present.
+     *
+     * @param repository the repository to use for reading the value if not in cache
+     * @param key the key whose associated value is to be returned
+     * @return the value associated with the specified key, or null if not found
+     */
     public V get(ICacheRepository<K, V> repository, K key) {
         this.lock.readLock().lock();
         V value;
@@ -61,6 +82,14 @@ public class SwiftCache<K, V> {
         return value;
     }
 
+    /**
+     * Inserts a new entry into the cache or updates an existing entry.
+     *
+     * @param repository the repository to use for writing the value
+     * @param key the key with which the specified value is to be associated
+     * @param value the value to be associated with the specified key
+     * @return the previous value associated with the key, or null if there was no mapping for the key
+     */
     public V put(ICacheRepository<K, V> repository, K key, V value) {
         this.lock.writeLock().lock();
         V newValue;
@@ -78,6 +107,12 @@ public class SwiftCache<K, V> {
         return newValue;
     }
 
+    /**
+     * Removes the entry for a specified key from the cache and the repository.
+     *
+     * @param repository the repository to remove the value from
+     * @param key the key whose mapping is to be removed from the cache
+     */
     public void remove(ICacheRepository<K, V> repository, K key) {
         this.lock.writeLock().lock();
         try {
@@ -91,6 +126,16 @@ public class SwiftCache<K, V> {
         }
     }
 
+    /**
+     * Executes an operation with the cache, utilizing the provided repository.
+     *
+     * @param repository the repository to use for the operation
+     * @param key the key to operate on
+     * @param value the value to operate with
+     * @param operation the operation to execute
+     * @param <R> the return type of the operation
+     * @return the result of the operation
+     */
     public <R> R executeWithCache(ICacheRepository<K,V> repository, K key, V value, TriFunction<ICacheRepository<K, V>, K, V, R> operation) {
         this.lock.writeLock().lock();
         R executionResult;
@@ -102,6 +147,11 @@ public class SwiftCache<K, V> {
         return executionResult;
     }
 
+    /**
+     * Returns the current size of the cache.
+     *
+     * @return the number of entries in the cache
+     */
     public long size() {
         this.lock.writeLock().lock();
         int size;
@@ -113,6 +163,9 @@ public class SwiftCache<K, V> {
         return size;
     }
 
+    /**
+     * Clears the cache, removing all entries.
+     */
     public void clear() {
         this.lock.writeLock().lock();
         try {
@@ -123,14 +176,29 @@ public class SwiftCache<K, V> {
         }
     }
 
+    /**
+     * Returns the eviction strategy used by this cache.
+     *
+     * @return the eviction strategy
+     */
     public IEvictionStrategy<K, V> getEvictionStrategy() {
         return this.evictionStrategy;
     }
 
+    /**
+     * Returns the reading policy used by this cache.
+     *
+     * @return the reading policy
+     */
     public IReadingPolicy<K, V> getReadingPolicy() {
         return this.readingPolicy;
     }
 
+    /**
+     * Returns the writing policy used by this cache.
+     *
+     * @return the writing policy
+     */
     public IWritingPolicy<K, V> getWritingPolicy() {
         return this.writingPolicy;
     }
