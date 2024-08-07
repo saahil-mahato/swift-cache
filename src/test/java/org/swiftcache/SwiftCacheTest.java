@@ -18,6 +18,11 @@ import org.swiftcache.writingpolicy.WriteAlwaysPolicy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the SwiftCache class. This class tests the functionality
+ * of the SwiftCache, including adding, retrieving, evicting items, and
+ * verifying the behavior of policies.
+ */
 @ExtendWith(MockitoExtension.class)
 class SwiftCacheTest {
 
@@ -30,6 +35,10 @@ class SwiftCacheTest {
     private IWritingPolicy<String, String> writingPolicy;
     private IReadingPolicy<String, String> readingPolicy;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * SwiftCache with default policies.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -39,6 +48,9 @@ class SwiftCacheTest {
         cache = new SwiftCache<>(5, evictionStrategy, writingPolicy, readingPolicy);
     }
 
+    /**
+     * Tests that an item can be added to the cache.
+     */
     @Test
     void testPutAddsItemToCache() {
         String key = "key1";
@@ -50,6 +62,9 @@ class SwiftCacheTest {
         assertEquals(1, cache.size()); // Ensure the size is now 1
     }
 
+    /**
+     * Tests that a cached item can be retrieved.
+     */
     @Test
     void testGetReturnsCachedItem() {
         String key = "key1";
@@ -65,6 +80,9 @@ class SwiftCacheTest {
         assertEquals(putValue, result);
     }
 
+    /**
+     * Tests that eviction is called when the cache reaches its maximum size.
+     */
     @Test
     void testEvictionCalledWhenCacheIsFull() {
         // Fill the cache to its maximum size
@@ -81,6 +99,9 @@ class SwiftCacheTest {
         assertNull(cache.get(repository, "key0")); // key0 should be evicted
     }
 
+    /**
+     * Tests that an item can be removed from the cache.
+     */
     @Test
     void testRemoveRemovesItemFromCache() {
         String key = "key1";
@@ -91,6 +112,9 @@ class SwiftCacheTest {
         verify(repository).remove(key);
     }
 
+    /**
+     * Tests the executeWithCache method to ensure it interacts correctly with the repository.
+     */
     @Test
     void testExecuteWithCache() {
         String key = "key1";
@@ -103,6 +127,9 @@ class SwiftCacheTest {
         verify(repository).executeWithCache(any(), eq(key), eq(value));
     }
 
+    /**
+     * Tests that the size method returns the current size of the cache.
+     */
     @Test
     void testSizeReturnsCurrentSize() {
         assertEquals(0, cache.size()); // Size should be 0 initially
@@ -110,6 +137,9 @@ class SwiftCacheTest {
         assertEquals(1, cache.size()); // Size should be 1 after adding an item
     }
 
+    /**
+     * Tests that the clear method empties the cache.
+     */
     @Test
     void testClearEmptiesCache() {
         cache.put(repository, "key1", "value1");
@@ -118,16 +148,25 @@ class SwiftCacheTest {
         assertEquals(0, cache.size());
     }
 
+    /**
+     * Tests that the getEvictionStrategy method returns the correct eviction strategy.
+     */
     @Test
     void testGetEvictionStrategy() {
         assertEquals(evictionStrategy, cache.getEvictionStrategy());
     }
 
+    /**
+     * Tests that the getReadingPolicy method returns the correct reading policy.
+     */
     @Test
     void testGetReadingPolicy() {
         assertEquals(readingPolicy, cache.getReadingPolicy());
     }
 
+    /**
+     * Tests that the getWritingPolicy method returns the correct writing policy.
+     */
     @Test
     void testGetWritingPolicy() {
         assertEquals(writingPolicy, cache.getWritingPolicy());

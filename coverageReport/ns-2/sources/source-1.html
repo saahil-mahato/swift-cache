@@ -104,7 +104,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * A custom cache implementation that provides caching functionality with
+&nbsp; * eviction strategies, reading policies, and writing policies.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this cache
+&nbsp; * @param &lt;V&gt; the type of cached values
+&nbsp; */
 &nbsp;public class SwiftCache&lt;K, V&gt; {
 &nbsp;
 <b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(SwiftCache.class.getName());</b>
@@ -123,6 +129,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    private final IReadingPolicy&lt;K, V&gt; readingPolicy;
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new SwiftCache with the specified maximum size and policies.
+&nbsp;     *
+&nbsp;     * @param maxSize the maximum number of entries the cache can hold
+&nbsp;     * @param evictionStrategy the strategy to use for evicting entries
+&nbsp;     * @param writingPolicy the policy to use for writing entries
+&nbsp;     * @param readingPolicy the policy to use for reading entries
+&nbsp;     */
 &nbsp;    public SwiftCache(long maxSize,
 &nbsp;                      IEvictionStrategy&lt;K, V&gt; evictionStrategy,
 &nbsp;                      IWritingPolicy&lt;K, V&gt; writingPolicy,
@@ -136,6 +150,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        this.readingPolicy = readingPolicy;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves an entry from the cache, using the specified repository to fetch the value if not present.
+&nbsp;     *
+&nbsp;     * @param repository the repository to use for reading the value if not in cache
+&nbsp;     * @param key the key whose associated value is to be returned
+&nbsp;     * @return the value associated with the specified key, or null if not found
+&nbsp;     */
 &nbsp;    public V get(ICacheRepository&lt;K, V&gt; repository, K key) {
 <b class="fc">&nbsp;        this.lock.readLock().lock();</b>
 &nbsp;        V value;
@@ -150,6 +171,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return value;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Inserts a new entry into the cache or updates an existing entry.
+&nbsp;     *
+&nbsp;     * @param repository the repository to use for writing the value
+&nbsp;     * @param key the key with which the specified value is to be associated
+&nbsp;     * @param value the value to be associated with the specified key
+&nbsp;     * @return the previous value associated with the key, or null if there was no mapping for the key
+&nbsp;     */
 &nbsp;    public V put(ICacheRepository&lt;K, V&gt; repository, K key, V value) {
 <b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
 &nbsp;        V newValue;
@@ -167,6 +196,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return newValue;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the entry for a specified key from the cache and the repository.
+&nbsp;     *
+&nbsp;     * @param repository the repository to remove the value from
+&nbsp;     * @param key the key whose mapping is to be removed from the cache
+&nbsp;     */
 &nbsp;    public void remove(ICacheRepository&lt;K, V&gt; repository, K key) {
 <b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
 &nbsp;        try {
@@ -180,6 +215,16 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        }</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Executes an operation with the cache, utilizing the provided repository.
+&nbsp;     *
+&nbsp;     * @param repository the repository to use for the operation
+&nbsp;     * @param key the key to operate on
+&nbsp;     * @param value the value to operate with
+&nbsp;     * @param operation the operation to execute
+&nbsp;     * @param &lt;R&gt; the return type of the operation
+&nbsp;     * @return the result of the operation
+&nbsp;     */
 &nbsp;    public &lt;R&gt; R executeWithCache(ICacheRepository&lt;K,V&gt; repository, K key, V value, TriFunction&lt;ICacheRepository&lt;K, V&gt;, K, V, R&gt; operation) {
 <b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
 &nbsp;        R executionResult;
@@ -191,6 +236,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return executionResult;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the current size of the cache.
+&nbsp;     *
+&nbsp;     * @return the number of entries in the cache
+&nbsp;     */
 &nbsp;    public long size() {
 <b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
 &nbsp;        int size;
@@ -202,6 +252,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return size;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the cache, removing all entries.
+&nbsp;     */
 &nbsp;    public void clear() {
 <b class="fc">&nbsp;        this.lock.writeLock().lock();</b>
 &nbsp;        try {
@@ -212,14 +265,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        }</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the eviction strategy used by this cache.
+&nbsp;     *
+&nbsp;     * @return the eviction strategy
+&nbsp;     */
 &nbsp;    public IEvictionStrategy&lt;K, V&gt; getEvictionStrategy() {
 <b class="fc">&nbsp;        return this.evictionStrategy;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the reading policy used by this cache.
+&nbsp;     *
+&nbsp;     * @return the reading policy
+&nbsp;     */
 &nbsp;    public IReadingPolicy&lt;K, V&gt; getReadingPolicy() {
 <b class="fc">&nbsp;        return this.readingPolicy;</b>
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the writing policy used by this cache.
+&nbsp;     *
+&nbsp;     * @return the writing policy
+&nbsp;     */
 &nbsp;    public IWritingPolicy&lt;K, V&gt; getWritingPolicy() {
 <b class="fc">&nbsp;        return this.writingPolicy;</b>
 &nbsp;    }
@@ -247,7 +315,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

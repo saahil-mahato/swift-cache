@@ -45,9 +45,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import java.util.Map;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * Interface representing a reading policy for a cache, providing a method
+&nbsp; * to read entries from the cache or a repository.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this reading policy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this reading policy
+&nbsp; */
 &nbsp;public interface IReadingPolicy&lt;K, V&gt; {
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Reads the value associated with the specified key from the cache map.
+&nbsp;     * If the value is not found in the cache, it retrieves it from the
+&nbsp;     * specified repository.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param key the key whose associated value is to be read
+&nbsp;     * @param repository the repository to use for reading the value if not found in the cache
+&nbsp;     * @return the value associated with the specified key, or null if not found
+&nbsp;     */
 &nbsp;    V read(Map&lt;K, V&gt; cacheMap, K key, ICacheRepository&lt;K, V&gt; repository);
 &nbsp;}
 </code>
@@ -73,7 +89,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

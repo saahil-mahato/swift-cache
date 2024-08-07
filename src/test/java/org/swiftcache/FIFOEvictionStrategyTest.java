@@ -11,13 +11,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Unit tests for the FIFOEvictionStrategy class. This class tests the behavior
+ * of the FIFO eviction strategy, ensuring that it correctly evicts the oldest
+ * items and manages the eviction queue.
+ */
 class FIFOEvictionStrategyTest {
 
     private FIFOEvictionStrategy<String, String> fifoEvictionStrategy;
     private Map<String, String> cacheMap;
     private Queue<String> evictionQueue;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * FIFO eviction strategy, cache map, and eviction queue.
+     */
     @BeforeEach
     void setUp() {
         fifoEvictionStrategy = new FIFOEvictionStrategy<>();
@@ -25,6 +33,10 @@ class FIFOEvictionStrategyTest {
         evictionQueue = new LinkedList<>();
     }
 
+    /**
+     * Tests that the evict method removes the oldest item from the cache
+     * and the eviction queue.
+     */
     @Test
     void testEvictRemovesOldestItem() {
         // Setup initial state
@@ -43,6 +55,10 @@ class FIFOEvictionStrategyTest {
         assertEquals(2, evictionQueue.size()); // Queue size should be reduced
     }
 
+    /**
+     * Tests that the evict method does not remove any items if the eviction
+     * queue is empty.
+     */
     @Test
     void testEvictDoesNotRemoveIfQueueIsEmpty() {
         // Evict from an empty queue
@@ -53,6 +69,10 @@ class FIFOEvictionStrategyTest {
         assertTrue(evictionQueue.isEmpty());
     }
 
+    /**
+     * Tests that the updateQueue method adds a key to the end of the eviction
+     * queue and maintains the correct order.
+     */
     @Test
     void testUpdateQueueAddsKeyToEnd() {
         // Add keys to the eviction queue

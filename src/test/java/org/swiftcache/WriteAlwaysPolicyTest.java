@@ -16,6 +16,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the WriteAlwaysPolicy class. This class tests the behavior
+ * of the Write Always writing policy, ensuring that it correctly writes values
+ * to both the cache and the underlying repository.
+ */
 @ExtendWith(MockitoExtension.class)
 class WriteAlwaysPolicyTest {
 
@@ -27,12 +32,20 @@ class WriteAlwaysPolicyTest {
     @Mock
     private ICacheRepository<String, String> repository;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * WriteAlwaysPolicy and the cache map.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         cacheMap = new HashMap<>();
     }
 
+    /**
+     * Tests that writing a value using the WriteAlwaysPolicy updates both
+     * the cache and the repository.
+     */
     @Test
     void testWriteToCacheAndRepository() {
         String key = "key1";
@@ -50,6 +63,9 @@ class WriteAlwaysPolicyTest {
         verify(repository).put(key, value); // Repository's put should be called
     }
 
+    /**
+     * Tests that the cache size is updated correctly after a write operation.
+     */
     @Test
     void testCacheSizeAfterWrite() {
         String key = "key1";
@@ -65,6 +81,11 @@ class WriteAlwaysPolicyTest {
         assertEquals(1, cacheMap.size()); // Cache size should be 1
     }
 
+    /**
+     * Tests the overwrite behavior of the WriteAlwaysPolicy. It ensures that
+     * writing a new value to an existing key updates both the cache and the
+     * repository.
+     */
     @Test
     void testOverwriteBehavior() {
         String key = "key1";

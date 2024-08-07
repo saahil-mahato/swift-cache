@@ -17,7 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * Unit tests for the SimpleReadPolicy class. This class tests the behavior
+ * of the Simple Read policy, ensuring that it correctly handles cache hits
+ * and misses without interacting with the underlying repository.
+ */
 @ExtendWith(MockitoExtension.class)
 class SimpleReadPolicyTest {
 
@@ -29,12 +33,20 @@ class SimpleReadPolicyTest {
     @Mock
     private ICacheRepository<String, String> repository;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * SimpleReadPolicy and the cache map.
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         cacheMap = new HashMap<>();
     }
 
+    /**
+     * Tests that a read hit returns the value from the cache without calling
+     * the repository.
+     */
     @Test
     void testReadHitReturnsValueFromCache() {
         String key = "key1";
@@ -47,6 +59,9 @@ class SimpleReadPolicyTest {
         verify(repository, never()).get(key); // Repository should not be called
     }
 
+    /**
+     * Tests that a read miss returns null when the key is not present in the cache.
+     */
     @Test
     void testReadMissReturnsNull() {
         String key = "key1";

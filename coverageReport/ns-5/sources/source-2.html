@@ -83,11 +83,30 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * An implementation of the IWritingPolicy interface that uses the Write Behind
+&nbsp; * policy. This policy writes the specified value to the cache immediately and
+&nbsp; * queues the write operation to the underlying data source (repository) to be
+&nbsp; * executed asynchronously in a background thread.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this writing policy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this writing policy
+&nbsp; */
 <b class="fc">&nbsp;public class WriteBehindPolicy&lt;K, V&gt; implements IWritingPolicy&lt;K, V&gt; {</b>
 &nbsp;
 <b class="fc">&nbsp;    private static final Logger LOGGER = Logger.getLogger(WriteBehindPolicy.class.getName());</b>
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Writes the specified value associated with the specified key to the cache map
+&nbsp;     * immediately. The write to the underlying repository is performed asynchronously
+&nbsp;     * in a background thread.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map to write the entry to
+&nbsp;     * @param key the key with which the specified value is to be associated
+&nbsp;     * @param value the value to be associated with the specified key
+&nbsp;     * @param repository the repository to write the entry to
+&nbsp;     * @return the value that was written
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public V write(Map&lt;K, V&gt; cacheMap, final K key, final V value, final ICacheRepository&lt;K, V&gt; repository) {
 &nbsp;        // Update the cache first
@@ -125,7 +144,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

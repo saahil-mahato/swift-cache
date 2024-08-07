@@ -10,11 +10,19 @@ import org.swiftcache.writingpolicy.IWritingPolicy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Unit tests for the SwiftCacheConfig class. This class tests the configuration
+ * of the SwiftCache, including valid and invalid combinations of eviction,
+ * reading, and writing policies.
+ */
 class SwiftCacheConfigTest {
 
     private SwiftCacheConfig config;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * SwiftCacheConfig with default values for tests.
+     */
     @BeforeEach
     void setUp() {
         // Initialize with default values for tests
@@ -23,6 +31,10 @@ class SwiftCacheConfigTest {
                 SwiftCacheConfig.WRITE_ALWAYS_POLICY);
     }
 
+    /**
+     * Tests valid combinations of eviction, reading, and writing policies.
+     * Verifies that the cache is initialized correctly with the specified policies.
+     */
     @Test
     void testValidCombinations() {
         // Define all valid combinations of policies
@@ -52,6 +64,9 @@ class SwiftCacheConfigTest {
         }
     }
 
+    /**
+     * Tests that an invalid eviction strategy throws an IllegalArgumentException.
+     */
     @Test
     void testInvalidEvictionStrategy() {
         config = new SwiftCacheConfig(100, "INVALID_EVICTION",
@@ -63,6 +78,9 @@ class SwiftCacheConfigTest {
         assertEquals("Invalid eviction strategy: INVALID_EVICTION", exception.getMessage());
     }
 
+    /**
+     * Tests that an invalid reading policy throws an IllegalArgumentException.
+     */
     @Test
     void testInvalidReadingPolicy() {
         config = new SwiftCacheConfig(100, SwiftCacheConfig.LRU_EVICTION_STRATEGY,
@@ -74,6 +92,9 @@ class SwiftCacheConfigTest {
         assertEquals("Invalid reading policy: INVALID_READ_POLICY", exception.getMessage());
     }
 
+    /**
+     * Tests that an invalid writing policy throws an IllegalArgumentException.
+     */
     @Test
     void testInvalidWritingPolicy() {
         config = new SwiftCacheConfig(100, SwiftCacheConfig.LRU_EVICTION_STRATEGY,

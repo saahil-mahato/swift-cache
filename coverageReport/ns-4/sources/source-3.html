@@ -81,9 +81,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import java.util.Map;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * An implementation of the IReadingPolicy interface that uses the Simple Read
+&nbsp; * policy. This policy only reads values from the cache and ignores the underlying
+&nbsp; * data source (repository).
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this reading policy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this reading policy
+&nbsp; */
 <b class="fc">&nbsp;public class SimpleReadPolicy&lt;K, V&gt; implements IReadingPolicy&lt;K, V&gt; {</b>
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Reads the value associated with the specified key from the cache.
+&nbsp;     * This policy does not attempt to fetch the value from the repository.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param key the key whose associated value is to be read
+&nbsp;     * @param repository the repository (ignored by this policy)
+&nbsp;     * @return the value associated with the specified key, or null if not found in the cache
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public V read(Map&lt;K, V&gt; cacheMap, K key, ICacheRepository&lt;K, V&gt; repository) {
 &nbsp;        // This policy only reads from the cache, ignoring the data source.
@@ -113,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

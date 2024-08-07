@@ -11,13 +11,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/**
+ * Unit tests for the LRUEvictionStrategy class. This class tests the behavior
+ * of the LRU eviction strategy, ensuring that it correctly evicts the least
+ * recently used items and manages the eviction queue.
+ */
 class LRUEvictionStrategyTest {
 
     private LRUEvictionStrategy<String, String> lruEvictionStrategy;
     private Map<String, String> cacheMap;
     private Queue<String> evictionQueue;
 
+    /**
+     * Sets up the test environment before each test case. Initializes the
+     * LRU eviction strategy, cache map, and eviction queue.
+     */
     @BeforeEach
     void setUp() {
         lruEvictionStrategy = new LRUEvictionStrategy<>();
@@ -25,6 +33,10 @@ class LRUEvictionStrategyTest {
         evictionQueue = new LinkedList<>();
     }
 
+    /**
+     * Tests that the evict method removes the least recently used item from the cache
+     * and the eviction queue.
+     */
     @Test
     void testEvictRemovesLeastRecentlyUsedItem() {
         // Setup initial state
@@ -43,6 +55,10 @@ class LRUEvictionStrategyTest {
         assertEquals(2, evictionQueue.size()); // Queue size should be reduced
     }
 
+    /**
+     * Tests that the evict method does not remove any items if the eviction
+     * queue is empty.
+     */
     @Test
     void testEvictDoesNotRemoveIfQueueIsEmpty() {
         // Evict from an empty queue
@@ -53,6 +69,10 @@ class LRUEvictionStrategyTest {
         assertTrue(evictionQueue.isEmpty());
     }
 
+    /**
+     * Tests that the updateQueue method moves a key to the end of the eviction
+     * queue, maintaining the correct order for least recently used eviction.
+     */
     @Test
     void testUpdateQueueMovesKeyToEnd() {
         // Add keys to the eviction queue

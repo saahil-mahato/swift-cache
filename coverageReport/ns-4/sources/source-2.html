@@ -83,11 +83,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * An implementation of the IReadingPolicy interface that uses the Refresh Ahead
+&nbsp; * policy. This policy retrieves a value from the cache and initiates an asynchronous
+&nbsp; * refresh of that value from the underlying data source (repository) to keep the cache
+&nbsp; * up-to-date.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this reading policy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this reading policy
+&nbsp; */
 <b class="fc">&nbsp;public class RefreshAheadPolicy&lt;K, V&gt; implements IReadingPolicy&lt;K, V&gt; {</b>
 &nbsp;
 <b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(RefreshAheadPolicy.class.getName());</b>
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Reads the value associated with the specified key from the cache. If the value is
+&nbsp;     * found, it initiates a background thread to refresh the value from the repository
+&nbsp;     * asynchronously.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param key the key whose associated value is to be read
+&nbsp;     * @param repository the repository to use for refreshing the value
+&nbsp;     * @return the value associated with the specified key, or null if not found
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public V read(final Map&lt;K, V&gt; cacheMap, final K key, final ICacheRepository&lt;K, V&gt; repository) {
 <b class="fc">&nbsp;        V value = cacheMap.get(key);</b>
@@ -125,7 +143,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

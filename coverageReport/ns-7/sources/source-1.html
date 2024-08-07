@@ -41,9 +41,27 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.utils;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * A functional interface representing a function that accepts three arguments
+&nbsp; * and produces a result. This interface can be used to create lambda expressions
+&nbsp; * or method references that take three parameters.
+&nbsp; *
+&nbsp; * @param &lt;A&gt; the type of the first argument to the function
+&nbsp; * @param &lt;B&gt; the type of the second argument to the function
+&nbsp; * @param &lt;C&gt; the type of the third argument to the function
+&nbsp; * @param &lt;R&gt; the type of the result of the function
+&nbsp; */
 &nbsp;@FunctionalInterface
 &nbsp;public interface TriFunction&lt;A, B, C, R&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies this function to the given arguments.
+&nbsp;     *
+&nbsp;     * @param a the first argument
+&nbsp;     * @param b the second argument
+&nbsp;     * @param c the third argument
+&nbsp;     * @return the function result
+&nbsp;     */
 &nbsp;    R apply(A a, B b, C c);
 &nbsp;}
 </code>
@@ -69,7 +87,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

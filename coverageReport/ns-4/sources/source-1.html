@@ -95,11 +95,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * An implementation of the IReadingPolicy interface that uses the Read-Through
+&nbsp; * policy. This policy attempts to read a value from the cache first, and if
+&nbsp; * the value is not present, it retrieves it from the underlying data source
+&nbsp; * (repository) and updates the cache.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this reading policy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this reading policy
+&nbsp; */
 <b class="fc">&nbsp;public class ReadThroughPolicy&lt;K, V&gt; implements IReadingPolicy&lt;K, V&gt; {</b>
 &nbsp;
 <b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(ReadThroughPolicy.class.getName());</b>
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Reads the value associated with the specified key. If the value is not
+&nbsp;     * found in the cache, it retrieves it from the specified repository and
+&nbsp;     * updates the cache.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param key the key whose associated value is to be read
+&nbsp;     * @param repository the repository to use for reading the value if not found in the cache
+&nbsp;     * @return the value associated with the specified key, or null if not found
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public V read(Map&lt;K, V&gt; cacheMap, K key, ICacheRepository&lt;K, V&gt; repository) {
 <b class="fc">&nbsp;        V value = cacheMap.get(key);</b>
@@ -138,7 +156,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

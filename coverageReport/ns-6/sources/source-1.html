@@ -30,13 +30,13 @@ Current scope:     <a href="../../index.html">all classes</a>
   <th class="name">Class</th>
 </tr>
   <tr>
-    <td class="name">ICacheRepository$MockitoMock$1886733319</td>
+    <td class="name">ICacheRepository$MockitoMock$1355643742</td>
   </tr>
   <tr>
-    <td class="name">ICacheRepository$MockitoMock$1886733319$auxiliary$dfkBbh0F</td>
+    <td class="name">ICacheRepository$MockitoMock$1355643742$auxiliary$gRecCffp</td>
   </tr>
   <tr>
-    <td class="name">ICacheRepository$MockitoMock$1886733319$auxiliary$gGJpmnyV</td>
+    <td class="name">ICacheRepository$MockitoMock$1355643742$auxiliary$NuAcF5jt</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -52,15 +52,48 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import org.swiftcache.utils.TriFunction;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * Interface representing a cache repository that provides methods for
+&nbsp; * basic cache operations such as retrieving, storing, and removing entries.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this repository
+&nbsp; * @param &lt;V&gt; the type of values maintained by this repository
+&nbsp; */
 &nbsp;public interface ICacheRepository&lt;K, V&gt; {
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the value associated with the specified key.
+&nbsp;     *
+&nbsp;     * @param key the key whose associated value is to be returned
+&nbsp;     * @return the value associated with the specified key, or null if not found
+&nbsp;     */
 &nbsp;    V get(K key);
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Associates the specified value with the specified key in the repository.
+&nbsp;     *
+&nbsp;     * @param key the key with which the specified value is to be associated
+&nbsp;     * @param value the value to be associated with the specified key
+&nbsp;     */
 &nbsp;    void put(K key, V value);
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the entry for the specified key from the repository.
+&nbsp;     *
+&nbsp;     * @param key the key whose mapping is to be removed from the repository
+&nbsp;     */
 &nbsp;    void remove(K key);
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Executes a specified operation using the cache, allowing for custom logic
+&nbsp;     * to be applied with the provided key and value.
+&nbsp;     *
+&nbsp;     * @param operation the operation to execute with the cache
+&nbsp;     * @param key the key to operate on
+&nbsp;     * @param value the value to operate with
+&nbsp;     * @param &lt;R&gt; the return type of the operation
+&nbsp;     * @return the result of the operation
+&nbsp;     */
 &nbsp;    &lt;R&gt; R executeWithCache(TriFunction&lt;ICacheRepository&lt;K, V&gt;, K, V, R&gt; operation, K key, V value);
 &nbsp;}
 </code>
@@ -86,7 +119,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

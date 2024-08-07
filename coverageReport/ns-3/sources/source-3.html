@@ -44,11 +44,31 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.Map;
 &nbsp;import java.util.Queue;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * Interface representing an eviction strategy for a cache, providing methods
+&nbsp; * to evict entries based on a specific policy and update the eviction queue.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this eviction strategy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this eviction strategy
+&nbsp; */
 &nbsp;public interface IEvictionStrategy&lt;K, V&gt; {
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Evicts entries from the cache based on the specific eviction policy
+&nbsp;     * implemented by the strategy.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param evictionQueue the queue used for eviction
+&nbsp;     */
 &nbsp;    void evict(Map&lt;K, V&gt; cacheMap, Queue&lt;K&gt; evictionQueue);
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the eviction queue based on the specific eviction policy
+&nbsp;     * implemented by the strategy.
+&nbsp;     *
+&nbsp;     * @param key the key to update in the eviction queue
+&nbsp;     * @param evictionQueue the queue to update
+&nbsp;     */
 &nbsp;    void updateQueue(K key, Queue&lt;K&gt; evictionQueue);
 &nbsp;}
 </code>
@@ -74,7 +94,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>

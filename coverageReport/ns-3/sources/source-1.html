@@ -94,11 +94,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.logging.Level;
 &nbsp;import java.util.logging.Logger;
 &nbsp;
-&nbsp;
+&nbsp;/**
+&nbsp; * An implementation of the IEvictionStrategy interface that uses the
+&nbsp; * First-In-First-Out (FIFO) eviction policy. This strategy evicts the
+&nbsp; * oldest entry from the cache when the maximum size is reached.
+&nbsp; *
+&nbsp; * @param &lt;K&gt; the type of keys maintained by this eviction strategy
+&nbsp; * @param &lt;V&gt; the type of values maintained by this eviction strategy
+&nbsp; */
 <b class="fc">&nbsp;public class FIFOEvictionStrategy&lt;K, V&gt; implements IEvictionStrategy&lt;K, V&gt; {</b>
 &nbsp;
 <b class="fc">&nbsp;    private static final Logger logger = Logger.getLogger(FIFOEvictionStrategy.class.getName());</b>
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Evicts an entry from the cache based on the FIFO policy. The oldest
+&nbsp;     * entry, which is at the head of the eviction queue, is removed.
+&nbsp;     *
+&nbsp;     * @param cacheMap the cache map containing the entries
+&nbsp;     * @param evictionQueue the queue used for eviction
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public void evict(Map&lt;K, V&gt; cacheMap, Queue&lt;K&gt; evictionQueue) {
 <b class="fc">&nbsp;        K evictedKey = evictionQueue.poll();</b>
@@ -110,6 +124,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the eviction queue based on the FIFO policy. If the key is not
+&nbsp;     * already in the queue, it is added to the tail of the queue.
+&nbsp;     *
+&nbsp;     * @param key the key to update in the eviction queue
+&nbsp;     * @param evictionQueue the queue to update
+&nbsp;     */
 &nbsp;    @Override
 &nbsp;    public void updateQueue(K key, Queue&lt;K&gt; evictionQueue) {
 <b class="fc">&nbsp;        if (!evictionQueue.contains(key)) {</b>
@@ -141,7 +162,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-07 12:19</div>
+    <div style="float:right;">generated on 2024-08-07 13:11</div>
 </div>
 </body>
 </html>
