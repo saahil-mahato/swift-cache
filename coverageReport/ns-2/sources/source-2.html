@@ -77,81 +77,33 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.cache;
 &nbsp;
-&nbsp;/**
-&nbsp; * Configuration class for SwiftCache.
-&nbsp; * This class encapsulates the configuration parameters for a SwiftCache instance,
-&nbsp; * including maximum size, eviction strategy, read policy, and write policy.
-&nbsp; */
+&nbsp;
 &nbsp;public class SwiftCacheConfig {
 &nbsp;
-&nbsp;    /**
-&nbsp;     * The maximum size of the cache in entries.
-&nbsp;     */
 &nbsp;    private final long maxSize;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * The eviction strategy to use for the cache.
-&nbsp;     */
 &nbsp;    private final String evictionStrategy;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * The read policy to use for the cache.
-&nbsp;     */
 &nbsp;    private final String readPolicy;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * The write policy to use for the cache.
-&nbsp;     */
 &nbsp;    private final String writePolicy;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the LRU eviction strategy.
-&nbsp;     */
 &nbsp;    public static final String LRU_EVICTION_STRATEGY = &quot;LRU&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the FIFO eviction strategy.
-&nbsp;     */
 &nbsp;    public static final String FIFO_EVICTION_STRATEGY = &quot;FIFO&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the simple read policy.
-&nbsp;     */
 &nbsp;    public static final String SIMPLE_READ_POLICY = &quot;SimpleRead&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the read-through policy.
-&nbsp;     */
 &nbsp;    public static final String READ_THROUGH_POLICY = &quot;ReadThrough&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the refresh-ahead policy.
-&nbsp;     */
 &nbsp;    public static final String REFRESH_AHEAD_POLICY = &quot;RefreshAhead&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the write-always policy.
-&nbsp;     */
 &nbsp;    public static final String WRITE_ALWAYS_POLICY = &quot;WriteAlways&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the write-behind policy.
-&nbsp;     */
 &nbsp;    public static final String WRITE_BEHIND_POLICY = &quot;WriteBehind&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constant representing the write-if-absent policy.
-&nbsp;     */
 &nbsp;    public static final String WRITE_IF_ABSENT_POLICY = &quot;WriteIfAbsent&quot;;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constructs a new SwiftCacheConfig instance with the specified parameters.
-&nbsp;     *
-&nbsp;     * @param maxSize        The maximum size of the cache.
-&nbsp;     * @param evictionStrategy The eviction strategy to use.
-&nbsp;     * @param readPolicy     The read policy to use.
-&nbsp;     * @param writePolicy    The write policy to use.
-&nbsp;     */
 &nbsp;    public SwiftCacheConfig(long maxSize,
 <b class="fc">&nbsp;                            String evictionStrategy, String readPolicy, String writePolicy) {</b>
 <b class="fc">&nbsp;        this.maxSize = maxSize;</b>
@@ -160,38 +112,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        this.writePolicy = writePolicy;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Returns the maximum size of the cache.
-&nbsp;     *
-&nbsp;     * @return The maximum size of the cache.
-&nbsp;     */
 &nbsp;    public long getMaxSize() {
 <b class="fc">&nbsp;        return maxSize;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Returns the eviction strategy to use for the cache.
-&nbsp;     *
-&nbsp;     * @return The eviction strategy.
-&nbsp;     */
 &nbsp;    public String getEvictionStrategy() {
 <b class="fc">&nbsp;        return evictionStrategy;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Returns the read policy to use for the cache.
-&nbsp;     *
-&nbsp;     * @return The read policy.
-&nbsp;     */
 &nbsp;    public String getReadPolicy() {
 <b class="fc">&nbsp;        return readPolicy;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Returns the write policy to use for the cache.
-&nbsp;     *
-&nbsp;     * @return The write policy.
-&nbsp;     */
 &nbsp;    public String getWritePolicy() {
 <b class="fc">&nbsp;        return writePolicy;</b>
 &nbsp;    }
@@ -219,7 +151,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-02 13:59</div>
+    <div style="float:right;">generated on 2024-08-07 12:19</div>
 </div>
 </body>
 </html>

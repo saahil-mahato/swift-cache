@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ICacheRepository</title>
+  <title>Coverage Report > TriFunction</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,52 +19,19 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">org.swiftcache.cacherepository</a>
+    <a href="../index.html">org.swiftcache.utils</a>
 </div>
 
-<h1>Coverage Summary for Class: ICacheRepository (org.swiftcache.cacherepository)</h1>
+<h1>Coverage Summary for Class: TriFunction (org.swiftcache.utils)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
 </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$auxiliary$Kf7LhYGx</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$auxiliary$yScHF7lx</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$438EL3U9</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$EsHyNPOC</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$Kat43QH0</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$loPQVekX</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$TVHrMXo9</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$v7SkRZjP</td>
-  </tr>
-  <tr>
-    <td class="name">ICacheRepository$MockitoMock$1381728645$MockitoMock$1478668896$auxiliary$vqZiJqpe</td>
-  </tr>
 <tr>
-  <td class="name"><strong>Total</strong></td>
+  <td class="name">TriFunction</td>
 </tr>
+
 </table>
 
 <br/>
@@ -72,40 +39,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.cacherepository;
+<code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache.utils;
 &nbsp;
-&nbsp;/**
-&nbsp; * Interface defining the basic operations for a cache repository.
-&nbsp; * This interface provides a common contract for cache implementations,
-&nbsp; * allowing for different cache strategies to be interchangeable.
-&nbsp; *
-&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
-&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
-&nbsp; */
-&nbsp;public interface ICacheRepository&lt;K, V&gt; {
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Retrieves a value from the cache based on the given key.
-&nbsp;     *
-&nbsp;     * @param key The key to retrieve the value for.
-&nbsp;     * @return The value associated with the key, or null if not found.
-&nbsp;     */
-&nbsp;    V get(K key);
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Stores a key-value pair in the cache.
-&nbsp;     *
-&nbsp;     * @param key   The key to associate with the value.
-&nbsp;     * @param value The value to store in the cache.
-&nbsp;     */
-&nbsp;    void put(K key, V value);
-&nbsp;
-&nbsp;    /**
-&nbsp;     * Removes a key-value pair from the cache.
-&nbsp;     *
-&nbsp;     * @param key The key of the entry to remove.
-&nbsp;     */
-&nbsp;    void remove(K key);
+&nbsp;@FunctionalInterface
+&nbsp;public interface TriFunction&lt;A, B, C, R&gt; {
+&nbsp;    R apply(A a, B b, C c);
 &nbsp;}
 </code>
 </pre>
@@ -130,7 +69,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-02 13:59</div>
+    <div style="float:right;">generated on 2024-08-07 12:19</div>
 </div>
 </body>
 </html>

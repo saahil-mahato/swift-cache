@@ -59,7 +59,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (7/7)
   </span>
 </td>
 <td class="coverageStat">
@@ -67,7 +67,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (16/16)
+    (2/2)
   </span>
 </td>
 <td class="coverageStat">
@@ -75,7 +75,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (27/27)
+    (25/25)
   </span>
 </td>
 </tr>
@@ -89,107 +89,69 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package org.swiftcache;
 &nbsp;
-&nbsp;import org.swiftcache.cacherepository.ICacheRepository;
 &nbsp;import org.swiftcache.cache.SwiftCache;
 &nbsp;import org.swiftcache.cache.SwiftCacheConfig;
-&nbsp;import org.swiftcache.datasource.DataSource;
 &nbsp;import org.swiftcache.evictionstrategy.*;
 &nbsp;import org.swiftcache.readingpolicy.*;
 &nbsp;import org.swiftcache.writingpolicy.*;
 &nbsp;
-&nbsp;/**
-&nbsp; * Manages the creation and retrieval of SwiftCache instances.
-&nbsp; * This class simplifies the process of configuring and creating SwiftCache instances
-&nbsp; * by handling the creation of necessary components based on the provided configuration.
-&nbsp; *
-&nbsp; * @param &lt;K&gt; The type of the keys used in the cache.
-&nbsp; * @param &lt;V&gt; The type of the values stored in the cache.
-&nbsp; */
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.function.Supplier;
+&nbsp;
+&nbsp;
 &nbsp;public class SwiftCacheManager&lt;K, V&gt; {
 &nbsp;
 &nbsp;    private SwiftCache&lt;K, V&gt; swiftCache;
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Constructs a new SwiftCacheManager instance.
-&nbsp;     * Initializes a SwiftCache instance based on the provided configuration and cache repository.
-&nbsp;     *
-&nbsp;     * @param config         The configuration parameters for the cache.
-&nbsp;     * @param cacheRepository The underlying cache repository.
-&nbsp;     */
-<b class="fc">&nbsp;    public SwiftCacheManager(SwiftCacheConfig config, ICacheRepository&lt;K, V&gt; cacheRepository) {</b>
-<b class="fc">&nbsp;        initializeCache(config, cacheRepository);</b>
+<b class="fc">&nbsp;    public SwiftCacheManager(SwiftCacheConfig config) {</b>
+<b class="fc">&nbsp;        initializeCache(config);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Retrieves the initialized SwiftCache instance.
-&nbsp;     *
-&nbsp;     * @return The SwiftCache instance.
-&nbsp;     */
 &nbsp;    public SwiftCache&lt;K, V&gt; getSwiftCache() {
 <b class="fc">&nbsp;        return this.swiftCache;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    private void initializeCache(SwiftCacheConfig config, ICacheRepository&lt;K, V&gt; cacheRepository) {
-<b class="fc">&nbsp;        DataSource&lt;K, V&gt; dataSource = new DataSource&lt;&gt;(cacheRepository);</b>
+&nbsp;    private void initializeCache(SwiftCacheConfig config) {
 &nbsp;
-<b class="fc">&nbsp;        swiftCache = new SwiftCache&lt;&gt;(config.getMaxSize(), dataSource,</b>
+<b class="fc">&nbsp;        swiftCache = new SwiftCache&lt;&gt;(config.getMaxSize(),</b>
 <b class="fc">&nbsp;                createEvictionStrategy(config.getEvictionStrategy()),</b>
 <b class="fc">&nbsp;                createWritingPolicy(config.getWritePolicy()),</b>
 <b class="fc">&nbsp;                createReadingPolicy(config.getReadPolicy()));</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Creates an eviction strategy instance based on the provided strategy name.
-&nbsp;     *
-&nbsp;     * @param strategy The name of the eviction strategy.
-&nbsp;     * @return The corresponding IEvictionStrategy instance.
-&nbsp;     * @throws IllegalArgumentException If the strategy is invalid.
-&nbsp;     */
 &nbsp;    private IEvictionStrategy&lt;K, V&gt; createEvictionStrategy(String strategy) {
-<b class="fc">&nbsp;        if (SwiftCacheConfig.FIFO_EVICTION_STRATEGY.equals(strategy)) {</b>
-<b class="fc">&nbsp;            return new FIFOEvictionStrategy&lt;&gt;();</b>
-<b class="fc">&nbsp;        } else if (SwiftCacheConfig.LRU_EVICTION_STRATEGY.equals(strategy)) {</b>
-<b class="fc">&nbsp;            return new LRUEvictionStrategy&lt;&gt;();</b>
-&nbsp;        } else {
-<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid eviction strategy: &quot; + strategy);</b>
-&nbsp;        }
+<b class="fc">&nbsp;        Map&lt;String, Supplier&lt;IEvictionStrategy&lt;K, V&gt;&gt;&gt; evictionStrategies = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        evictionStrategies.put(SwiftCacheConfig.FIFO_EVICTION_STRATEGY, FIFOEvictionStrategy::new);</b>
+<b class="fc">&nbsp;        evictionStrategies.put(SwiftCacheConfig.LRU_EVICTION_STRATEGY, LRUEvictionStrategy::new);</b>
+&nbsp;
+<b class="fc">&nbsp;        return createStrategy(evictionStrategies, strategy, &quot;eviction strategy&quot;);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Creates a reading policy instance based on the provided policy name.
-&nbsp;     *
-&nbsp;     * @param policy The name of the reading policy.
-&nbsp;     * @return The corresponding IReadingPolicy instance.
-&nbsp;     * @throws IllegalArgumentException If the policy is invalid.
-&nbsp;     */
 &nbsp;    private IReadingPolicy&lt;K, V&gt; createReadingPolicy(String policy) {
-<b class="fc">&nbsp;        if (SwiftCacheConfig.READ_THROUGH_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new ReadThroughPolicy&lt;&gt;();</b>
-<b class="fc">&nbsp;        } else if (SwiftCacheConfig.REFRESH_AHEAD_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new RefreshAheadPolicy&lt;&gt;();</b>
-<b class="fc">&nbsp;        } else if (SwiftCacheConfig.SIMPLE_READ_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new SimpleReadPolicy&lt;&gt;();</b>
-&nbsp;        } else {
-<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid reading policy: &quot; + policy);</b>
-&nbsp;        }
+<b class="fc">&nbsp;        Map&lt;String, Supplier&lt;IReadingPolicy&lt;K, V&gt;&gt;&gt; readingPolicies = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        readingPolicies.put(SwiftCacheConfig.READ_THROUGH_POLICY, ReadThroughPolicy::new);</b>
+<b class="fc">&nbsp;        readingPolicies.put(SwiftCacheConfig.REFRESH_AHEAD_POLICY, RefreshAheadPolicy::new);</b>
+<b class="fc">&nbsp;        readingPolicies.put(SwiftCacheConfig.SIMPLE_READ_POLICY, SimpleReadPolicy::new);</b>
+&nbsp;
+<b class="fc">&nbsp;        return createStrategy(readingPolicies, policy, &quot;reading policy&quot;);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Creates a writing policy instance based on the provided policy name.
-&nbsp;     *
-&nbsp;     * @param policy The name of the writing policy.
-&nbsp;     * @return The corresponding IWritingPolicy instance.
-&nbsp;     * @throws IllegalArgumentException If the policy is invalid.
-&nbsp;     */
 &nbsp;    private IWritingPolicy&lt;K, V&gt; createWritingPolicy(String policy) {
-<b class="fc">&nbsp;        if (SwiftCacheConfig.WRITE_ALWAYS_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new WriteAlwaysPolicy&lt;&gt;();</b>
-<b class="fc">&nbsp;        } else if (SwiftCacheConfig.WRITE_BEHIND_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new WriteBehindPolicy&lt;&gt;();</b>
-<b class="fc">&nbsp;        } else if (SwiftCacheConfig.WRITE_IF_ABSENT_POLICY.equals(policy)) {</b>
-<b class="fc">&nbsp;            return new WriteIfAbsentPolicy&lt;&gt;();</b>
+<b class="fc">&nbsp;        Map&lt;String, Supplier&lt;IWritingPolicy&lt;K, V&gt;&gt;&gt; writingPolicies = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        writingPolicies.put(SwiftCacheConfig.WRITE_ALWAYS_POLICY, WriteAlwaysPolicy::new);</b>
+<b class="fc">&nbsp;        writingPolicies.put(SwiftCacheConfig.WRITE_BEHIND_POLICY, WriteBehindPolicy::new);</b>
+<b class="fc">&nbsp;        writingPolicies.put(SwiftCacheConfig.WRITE_IF_ABSENT_POLICY, WriteIfAbsentPolicy::new);</b>
+&nbsp;
+<b class="fc">&nbsp;        return createStrategy(writingPolicies, policy, &quot;writing policy&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private &lt;T&gt; T createStrategy(Map&lt;String, Supplier&lt;T&gt;&gt; strategies, String key, String type) {
+<b class="fc">&nbsp;        Supplier&lt;T&gt; strategy = strategies.get(key);</b>
+<b class="fc">&nbsp;        if (strategy != null) {</b>
+<b class="fc">&nbsp;            return strategy.get();</b>
 &nbsp;        } else {
-<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid writing policy: &quot; + policy);</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid &quot; + type + &quot;: &quot; + key);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;}
@@ -216,7 +178,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-08-02 13:59</div>
+    <div style="float:right;">generated on 2024-08-07 12:19</div>
 </div>
 </body>
 </html>
