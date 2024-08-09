@@ -41,9 +41,12 @@ public class ReadThroughPolicy<K, V> implements IReadingPolicy<K, V> {
 
                 logger.log(Level.INFO, "Read miss for key: {0}, fetched from data source", key);
             }
-        } else {
-            logger.log(Level.INFO,"Read hit for key: {0}", key);
+
+            return value;
         }
+
+        logger.log(Level.INFO,"Read hit for key: {0}", key);
+
         return value;
     }
 }

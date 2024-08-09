@@ -111,8 +111,8 @@ public class SwiftCacheManager<K, V> {
         Supplier<T> strategy = strategies.get(key);
         if (strategy != null) {
             return strategy.get();
-        } else {
-            throw new IllegalArgumentException("Invalid " + type + ": " + key);
         }
+
+        throw new IllegalArgumentException("Invalid " + type + ": " + key);
     }
 }
