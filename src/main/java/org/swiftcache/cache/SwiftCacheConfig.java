@@ -60,7 +60,7 @@ public class SwiftCacheConfig {
      * @return the maximum size
      */
     public long getMaxSize() {
-        return maxSize;
+        return this.maxSize;
     }
 
     /**
@@ -69,7 +69,7 @@ public class SwiftCacheConfig {
      * @return the eviction strategy
      */
     public String getEvictionStrategy() {
-        return evictionStrategy;
+        return this.evictionStrategy;
     }
 
     /**
@@ -78,7 +78,7 @@ public class SwiftCacheConfig {
      * @return the reading policy
      */
     public String getReadPolicy() {
-        return readPolicy;
+        return this.readPolicy;
     }
 
     /**
@@ -87,6 +87,6 @@ public class SwiftCacheConfig {
      * @return the writing policy
      */
     public String getWritePolicy() {
-        return writePolicy;
+        return this.writePolicy;
     }
 }

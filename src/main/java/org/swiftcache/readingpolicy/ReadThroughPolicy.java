@@ -32,10 +32,13 @@ public class ReadThroughPolicy<K, V> implements IReadingPolicy<K, V> {
     @Override
     public V read(Map<K, V> cacheMap, K key, ICacheRepository<K, V> repository) {
         V value = cacheMap.get(key);
+
         if (value == null) {
             value = repository.get(key);
+
             if (value != null) {
                 cacheMap.put(key, value);
+
                 logger.log(Level.INFO, "Read miss for key: {0}, fetched from data source", key);
             }
         } else {

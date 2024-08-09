@@ -37,6 +37,7 @@ public class RefreshAheadPolicy<K, V> implements IReadingPolicy<K, V> {
         new Thread(() -> {
             V freshValue = repository.get(key);
             cacheMap.put(key, freshValue);
+
             logger.log(Level.INFO, "Value for key: {0} refreshed in background", key);
         }).start();
 

@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
 
-    private static final Logger LOGGER = Logger.getLogger(WriteBehindPolicy.class.getName());
+    private static final Logger logger = Logger.getLogger(WriteBehindPolicy.class.getName());
 
     /**
      * Writes the specified value associated with the specified key to the cache map
@@ -38,7 +38,8 @@ public class WriteBehindPolicy<K, V> implements IWritingPolicy<K, V> {
         // Update the data source asynchronously in a background thread
         new Thread(() -> {
             repository.put(key, value);
-            LOGGER.log(Level.INFO, "Written key: {0} to cache, queued for background write to data source", key);
+
+            logger.log(Level.INFO, "Written key: {0} to cache, queued for background write to data source", key);
         }).start();
 
         return value;
